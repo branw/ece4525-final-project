@@ -361,7 +361,6 @@ class MicrogameState extends State {
         p.fill(0, 0, 0);
         p.textSize(13);
         p.textAlign(p.CENTER);
-        p.text("game", 100, 100);
 
 
         const elapsed = Date.now() - this.startTime;
