@@ -36,6 +36,11 @@ class IntroState extends State {
     offset_wario_dance = 0;
     dir_wario_dance = 1;
     danceTimer = -1;
+
+    bounceTimer = -1;
+    option_offset = 0;
+    start_offset = 0;
+    help_offset = 0;
     update(delta) {
         if (this.game.mouse['left']) {
             // options button pressed
@@ -55,6 +60,44 @@ class IntroState extends State {
 
             }
         }
+
+        if (inBoundingBox(60,275,60+160,275+30, p.mouseX, p.mouseY)){
+            if(this.option_offset == 0 && Date.now() - this.bounceTimer > 1000){
+                this.option_offset = 5;
+                this.bounceTImer = Date.now();
+            }
+            else{
+                this.option_offset = 0;
+            }
+        }
+        // check start button pressed
+        else if (inBoundingBox(240,275,240+150,275+30, p.mouseX, p.mouseY)){
+            if(this.start_offset == 0 && Date.now() - this.bounceTimer > 1000){
+                this.start_offset = 5;
+                this.bounceTImer = Date.now();
+            }
+            else{
+                this.start_offset = 0;
+            }
+        }
+        // check if help button pressed
+        else if (inBoundingBox(410,275, 410+125, 275+30, p.mouseX, p.mouseY)){
+            if(this.help_offset == 0 && Date.now() - this.bounceTimer > 1000){
+                this.bounceTImer = Date.now();
+
+                this.help_offset = 5;
+            }
+            else{
+                this.help_offset = 0;
+            }
+
+        }
+        else{
+            this.help_offset = 0;
+            this.start_offset = 0;
+            this.option_offset = 0;
+        }
+
         // if(this.offset_wario_dance >= 200){
         //     this.offset_wario_dance = 0;
         // }
@@ -101,9 +144,9 @@ class IntroState extends State {
         p.pushMatrix();
         p.translate(65,275);
         p.scale(.5);
-        p.image(this.option_button,0 , 0);
-        p.image(this.start_button, 360, 0);
-        p.image(this.help_button, 700,0);
+        p.image(this.option_button,0 , 0 - this.option_offset*2);
+        p.image(this.start_button, 360, 0 - this.start_offset*2);
+        p.image(this.help_button, 700,0 - this.help_offset*2);
         p.popMatrix();
 
         p.pushMatrix();
