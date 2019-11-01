@@ -41,6 +41,7 @@ class IntroState extends State {
     option_offset = 0;
     start_offset = 0;
     help_offset = 0;
+    bounce_speed = 100;
     update(delta) {
         if (this.game.mouse['left']) {
             // options button pressed
@@ -62,33 +63,38 @@ class IntroState extends State {
         }
 
         if (inBoundingBox(60,275,60+160,275+30, p.mouseX, p.mouseY)){
-            if(this.option_offset == 0 && Date.now() - this.bounceTimer > 1000){
-                this.option_offset = 5;
-                this.bounceTImer = Date.now();
-            }
-            else{
-                this.option_offset = 0;
+            if(Date.now() - this.bounceTimer > this.bounce_speed){
+                if(this.option_offset == 0){
+                    this.option_offset = 5;
+                }
+                else{
+                    this.option_offset = 0;
+                }
+                this.bounceTimer = Date.now();
             }
         }
         // check start button pressed
         else if (inBoundingBox(240,275,240+150,275+30, p.mouseX, p.mouseY)){
-            if(this.start_offset == 0 && Date.now() - this.bounceTimer > 1000){
-                this.start_offset = 5;
-                this.bounceTImer = Date.now();
-            }
-            else{
-                this.start_offset = 0;
+            if(Date.now() - this.bounceTimer > this.bounce_speed){
+                if(this.start_offset == 0){
+                    this.start_offset = 5;
+                }
+                else{
+                    this.start_offset = 0;
+                }
+                this.bounceTimer = Date.now();
             }
         }
         // check if help button pressed
         else if (inBoundingBox(410,275, 410+125, 275+30, p.mouseX, p.mouseY)){
-            if(this.help_offset == 0 && Date.now() - this.bounceTimer > 1000){
-                this.bounceTImer = Date.now();
-
-                this.help_offset = 5;
-            }
-            else{
-                this.help_offset = 0;
+            if(Date.now() - this.bounceTimer > this.bounce_speed){
+                if(this.help_offset == 0){
+                    this.help_offset = 5;
+                }
+                else{
+                    this.help_offset = 0;
+                }
+                this.bounceTimer = Date.now();
             }
 
         }
