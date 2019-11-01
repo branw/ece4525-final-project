@@ -1,5 +1,9 @@
+var p;
 new Processing(document.getElementById('game'), function(processingInstance) {
+    p = processingInstance;
+
     with (processingInstance) {
+
         size(600, 400); 
         frameRate(60);
 
