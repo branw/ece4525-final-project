@@ -25,6 +25,10 @@ class Game {
         return this.states[this.states.length-1];
     }
 
+    previousState(state) {
+        return this.states[this.states.indexOf(state) - 1];
+    }
+
     keyPressed(key) {
         this.keys[key] = true;
     }
@@ -45,7 +49,7 @@ class Game {
         this.currentState().update(delta);
     }
 
-    draw(p) {
-        this.currentState().draw(p);
+    draw() {
+        this.currentState().draw();
     }
 }
