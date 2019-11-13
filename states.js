@@ -222,6 +222,7 @@ class OptionState extends State{
             }
         }
     }
+
     draw() {
         p.pushMatrix();
         p.translate(70,45);
@@ -245,45 +246,56 @@ class OptionState extends State{
         p.scale(.75);
         p.image(SPRITES.warioSheet.get(0,996,230,165), 0, 0);
         p.popMatrix();
-    }    
-
+    }
 }
 
 class CurtainState extends State {
+    duration;
+    direction;
+
     startTime;
 
-    constructor() {
+    constructor(direction, duration=800) {
         super();
+
+        this.direction = direction;
+        this.duration = duration;
 
         this.startTime = millis();
     }
 
     update(delta) {
-        if (millis() - this.startTime > 800) {
+        // Exit state when the animation is complete
+        if (millis() - this.startTime > this.duration) {
             this.game.popState();
         }
     }
 
     draw() {
-        console.log(this.game.previousState(this));
-        this.game.previousState(this).draw();
-
         const elapsed = millis() - this.startTime;
-        const elapsedRatio = elapsed/800;
+        const elapsedRatio = elapsed/this.duration;
 
-        p.fill(0, 0, 0, (1 - elapsedRatio) * 255);
-        p.rect(0, 0, 600, 400);
+        let boomboxRatio = 1 - elapsedRatio;
+        if (this.direction === 'open') {
+            boomboxRatio = elapsedRatio;
+
+            this.game.previousState(this).draw();
+
+            // Fade
+            p.fill(0, 0, 0, (1 - elapsedRatio) * 255);
+            p.rect(0, 0, 600, 400);
+        }
         
+        // Slide halves of boombox
         p.pushMatrix();
         p.translate(30 ,30);
         p.scale(.90);
-        p.image(SPRITES.left_boom, 0 - 400*elapsedRatio, 0);
+        p.image(SPRITES.left_boom, 0 - 400*boomboxRatio, 0);
         p.popMatrix();
-
         p.pushMatrix();
         p.scale(.90);
         p.translate(300 ,30);
-        p.image(SPRITES.right_boom, 33 + 400*elapsedRatio, 3);
+        p.image(SPRITES.right_boom, 33 + 400*boomboxRatio, 3);
         p.popMatrix();
     }
 }
@@ -291,28 +303,34 @@ class CurtainState extends State {
 // Shows current stage number and health
 class CounterState extends State {
     level;
-    levelStart;
-    start_open_opq = 255;
+    
+    elapsed = 0;
 
     constructor() {
         super();
 
         this.level = 0;
-        this.levelStart = millis();
     }
 
     update(delta) {
-        const elapsed = millis() - this.levelStart;
+        // Increment levels everytime we enter the counter screen
+        if (this.elapsed === 0) {
+            this.level++;
+        }
+
+        this.elapsed += delta;
 
         // Move to game after 5 seconds
-        if (elapsed >= 2000) {
+        if (this.elapsed >= 2000) {
             const microgame = randomMicrogame();
-            const duration = 5 + (5 - this.level/2);
+            const duration = (5 + (5 - this.level/2)) * 1000;
 
-            //TODO handle when game is over and counter is re-entered
+            // Reset the time elapsed in the counter
+            this.elapsed = 0;
 
+            // Create the minigame and curtain over it
             this.game.pushState(new MicrogameState(microgame, duration));
-            this.game.pushState(new CurtainState());
+            this.game.pushState(new CurtainState('open'));
         }
     }
 
@@ -337,27 +355,29 @@ class CounterState extends State {
 class MicrogameState extends State {
     microgame;
     duration;
-    startTime;
 
-    playing = false;
+    elapsed = 0;
 
     constructor(microgame, duration) {
         super();
 
         this.microgame = new microgame();
         this.duration = duration;
-
-        this.startTime = millis();
     }
 
     update(delta) {
+        this.elapsed += delta;
+
         // Time's up
-        if (this.startTime + this.duration > millis()) {
-            this.playing = false;
+        if (this.elapsed > this.duration) {
+            this.game.changeState(new CurtainState('close'));
+            return;
         }
 
         // Update microgame
         const status = this.microgame.update(delta);
+
+        // Handle game over
         if (status === 'won') {
             // change state to winning screen
 
@@ -368,12 +388,9 @@ class MicrogameState extends State {
 
     draw() {
         // Draw game
-        this.microgame.draw(p);
+        this.microgame.draw();
 
-        p.fill(0, 0, 0);
-        p.textSize(13);
-        p.textAlign(p.CENTER);
-
+        // Draw border
         switch (this.microgame.border) {
         case 'purple':
             setBorderBg(160, 80, 200);
@@ -385,5 +402,21 @@ class MicrogameState extends State {
             p.image(SPRITES.borders.tv);
             break;
         }
+
+        const elapsedRatio = this.elapsed/this.duration;
+
+        // Draw bomb and its fuse
+        const trailIdx = Math.floor((0.99999999 - elapsedRatio)*SPRITES.bomb.trail.length);
+        p.image(SPRITES.bomb.trail[trailIdx], 10, 400 - 40 - 5);
+
+        // Draw flame on end of fuse
+        const flameInterval = this.duration/50;
+        const flameIdx = Math.floor(this.elapsed/flameInterval) % SPRITES.bomb.flame.length;
+        const flameOffset = [
+            [47, -35], [80, 0], [195, 0], [315, 0], [435, 0], [555, 0]
+        ];
+        p.image(SPRITES.bomb.flame[flameIdx],
+            10 + flameOffset[trailIdx][0],
+            400 - 40 - 5 + flameOffset[trailIdx][1]);
     }
 }

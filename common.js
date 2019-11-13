@@ -15,9 +15,24 @@ function initSprites() {
         'help_button': p.loadImage('./resources/help_button.png'),
         'option_button': p.loadImage('./resources/option_button.png'),
 
+        // For MicrogameState
         'borders': {
             'purple': p.loadImage('./resources/border_purple.png'),
             'tv': p.loadImage('./resources/border_tv.png')
+        },
+        'bomb': {
+            'trail': [
+                p.loadImage('./resources/bomb_trail0.png'),
+                p.loadImage('./resources/bomb_trail1.png'),
+                p.loadImage('./resources/bomb_trail2.png'),
+                p.loadImage('./resources/bomb_trail3.png'),
+                p.loadImage('./resources/bomb_trail4.png'),
+                p.loadImage('./resources/bomb_trail5.png'),
+            ],
+            'flame': [
+                p.loadImage('./resources/bomb_flame0.png'),
+                p.loadImage('./resources/bomb_flame1.png')
+            ],
         },
     };
 }

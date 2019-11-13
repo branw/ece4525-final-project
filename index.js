@@ -6,7 +6,7 @@ new Processing(document.getElementById('game'), function(processingInstance) {
     initSprites();
 
     p.size(600, 400);
-    
+
     p.background(0xb8, 0xb8, 0xb8);
     setBorderBg(0xb8, 0xb8, 0xb8);
 
@@ -34,11 +34,10 @@ new Processing(document.getElementById('game'), function(processingInstance) {
 
     // Register game loop handler
     let lastUpdate = millis();
-    p.draw = function() {
-        if (!areSpritesLoaded()) console.log('Loading sprites');
-
-        game.update(millis() - lastUpdate);
-        lastUpdate = millis();
+    p.draw = function() {    
+        const currentTime = millis();
+        game.update(currentTime - lastUpdate);
+        lastUpdate = currentTime;
 
         game.draw();
     };
