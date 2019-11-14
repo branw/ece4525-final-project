@@ -103,17 +103,6 @@ class IntroState extends State {
             this.start_offset = 0;
             this.option_offset = 0;
         }
-
-        // if(this.offset_wario_dance >= 200){
-        //     this.offset_wario_dance = 0;
-        // }
-        // else{
-        //     if((Date.now() - this.danceTimer) > 300 || this.danceTimer == -1){
-        //         this.danceTimer = Date.now();
-        //         this.offset_wario_dance += 44; 
-        //     }
-        // }
-
         
         if((Date.now() - this.danceTimer) > 100 || this.danceTimer == -1){
             this.danceTimer = Date.now();
@@ -219,10 +208,15 @@ class HelpState extends State{
         p.textSize(16);
         p.text("Follow the instruction displayed during the \nstart of the minigame", 300, 160);
         p.text("Each minigame will either use:\nthe arrow keys, space bar, and/or the mouse", 300, 240);
+        p.fill(255,255,255);
+        p.textSize(15)
+        p.text("WarioWare - Help Guide", 157, 59);
     }    
 }
 
 class OptionState extends State{
+    wario_timer = 3000;
+    offset = 0;
     update(delta) {
     // check close button pressed
         if (this.game.mouse['left']) {
@@ -231,6 +225,16 @@ class OptionState extends State{
                     this.game.changeState(new IntroState());
             }
         }
+        if(Date.now() - this.wario_timer > 300){
+            if(this.offset == 0){
+                this.offset = 245;
+            }
+            else{
+                this.offset = 0;
+            }
+            this.wario_timer = Date.now();
+        }
+
     }
     draw(p) {
         p.fill(255,255,255,0);
@@ -259,8 +263,11 @@ class OptionState extends State{
         p.pushMatrix();
         p.translate(215,175);
         p.scale(.75);
-        p.image(this.warioSheet.get(0,996,230,165), 0, 0);
+        p.image(this.warioSheet.get(0 + this.offset,996,230,165), 0, 0);
         p.popMatrix();
+        p.fill(255,255,255);
+        p.textSize(15)
+        p.text("WarioWare - Options", 145, 59);
     }    
 
 }
