@@ -1,22 +1,26 @@
 class MarioNESGame extends Microgame {
     border = 'tv';
+
     state = "direction";
-    start = Date.now();
-    total spin = 0;
+    elapsed = 0;
+    total_spin = 0;
+
     constructor(){
         super();
     }
 
     update(delta) {
-        if(Date.now() - start > 300){
-            state = "play";
+        this.elapsed += delta;
+
+        if(this.elapsed > 300){
+            this.state = "play";
         }
     }   
 
     draw() {
         p.background(120, 0, 0);
 
-        if(state === "direction"){
+        if(this.state === "direction"){
             p.pushMatrix();
             p.translate(50,100);
             returnText("SPIN!"); //ABCDEFGHIJKLMNOPQRSTUV
@@ -27,13 +31,13 @@ class MarioNESGame extends Microgame {
             p.popMatrix();
 
         }
-        else if(state === "play"){
+        else if(this.state === "play"){
 
         }
-        else if(state === "lose"){
+        else if(this.state === "lose"){
 
         }
-        else if(state === "win"){
+        else if(this.state === "win"){
 
         }
 
