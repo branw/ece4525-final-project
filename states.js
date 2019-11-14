@@ -32,7 +32,10 @@ class IntroState extends State {
     start_offset = 0;
     help_offset = 0;
     bounce_speed = 100;
+
+
     update(delta) {
+        this.game.changeState(new CounterState()); // remove after finish testing
         if (this.game.mouse['left']) {
             // options button pressed
 
