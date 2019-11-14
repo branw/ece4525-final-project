@@ -1,12 +1,6 @@
 class State {
     game;
-    wario_border = p.loadImage("./resources/wario_border.png");
-    wario_background = p.loadImage("./resources/wario_background.png");
-    wario_logo = p.loadImage("./resources/warioware_logo.png");
-    left_boom = p.loadImage("./resources/leftboom.png");
-    right_boom = p.loadImage("./resources/rightboom.png");
-    inner_window = p.loadImage("./resources/inner_window.png");
-    warioSheet = p.loadImage("./resources/wario_sheet.gif")
+    
     setGame(game) {
         this.game = game;
     }
@@ -29,10 +23,6 @@ class IntroState extends State {
     logo_size = .2;
     start_close_opq = 0;
 
-    start_button = p.loadImage("./resources/start_button.png");
-    help_button = p.loadImage("./resources/help_button.png");
-    option_button = p.loadImage("./resources/option_button.png")
-
     offset_wario_dance = 0;
     dir_wario_dance = 1;
     danceTimer = -1;
@@ -53,7 +43,7 @@ class IntroState extends State {
             // check start button pressed
             if (inBoundingBox(240,275,240+150,275+30, p.mouseX, p.mouseY)){
                 this.started = true;
-                this.transistionStart = Date.now();
+                this.transistionStart = millis();
             }
             // check if help button pressed
             if (inBoundingBox(410,275, 410+125, 275+30, p.mouseX, p.mouseY)){
@@ -63,38 +53,38 @@ class IntroState extends State {
         }
 
         if (inBoundingBox(60,275,60+160,275+30, p.mouseX, p.mouseY)){
-            if(Date.now() - this.bounceTimer > this.bounce_speed){
+            if(millis() - this.bounceTimer > this.bounce_speed){
                 if(this.option_offset == 0){
                     this.option_offset = 5;
                 }
                 else{
                     this.option_offset = 0;
                 }
-                this.bounceTimer = Date.now();
+                this.bounceTimer = millis();
             }
         }
         // check start button pressed
         else if (inBoundingBox(240,275,240+150,275+30, p.mouseX, p.mouseY)){
-            if(Date.now() - this.bounceTimer > this.bounce_speed){
+            if(millis() - this.bounceTimer > this.bounce_speed){
                 if(this.start_offset == 0){
                     this.start_offset = 5;
                 }
                 else{
                     this.start_offset = 0;
                 }
-                this.bounceTimer = Date.now();
+                this.bounceTimer = millis();
             }
         }
         // check if help button pressed
         else if (inBoundingBox(410,275, 410+125, 275+30, p.mouseX, p.mouseY)){
-            if(Date.now() - this.bounceTimer > this.bounce_speed){
+            if(millis() - this.bounceTimer > this.bounce_speed){
                 if(this.help_offset == 0){
                     this.help_offset = 5;
                 }
                 else{
                     this.help_offset = 0;
                 }
-                this.bounceTimer = Date.now();
+                this.bounceTimer = millis();
             }
 
         }
@@ -103,9 +93,20 @@ class IntroState extends State {
             this.start_offset = 0;
             this.option_offset = 0;
         }
+
+        // if(this.offset_wario_dance >= 200){
+        //     this.offset_wario_dance = 0;
+        // }
+        // else{
+        //     if((millis() - this.danceTimer) > 300 || this.danceTimer == -1){
+        //         this.danceTimer = millis();
+        //         this.offset_wario_dance += 44; 
+        //     }
+        // }
+
         
-        if((Date.now() - this.danceTimer) > 100 || this.danceTimer == -1){
-            this.danceTimer = Date.now();
+        if((millis() - this.danceTimer) > 100 || this.danceTimer == -1){
+            this.danceTimer = millis();
             this.offset_wario_dance += (44 * this.dir_wario_dance); 
             if(this.offset_wario_dance >= 4*44){
                 this.dir_wario_dance = -1;
@@ -116,58 +117,64 @@ class IntroState extends State {
         }
         
     }
-    draw(p) {
+    draw() {
+        if (!areSpritesLoaded()) {
+            return;
+        }
+
+        setBg(0xb8, 0xb8, 0xb8);
+
         //p.background(255, 255, 255);
         p.fill(255,255,255,0);
         p.rect(0,0,600-1,400-1);
         p.fill(0, 0, 0);
         p.textSize(13);
         p.textAlign(p.CENTER);
-        p.image(this.wario_border,0 ,0);
+        p.image(SPRITES.wario_border,0 ,0);
 
         p.pushMatrix();
         p.translate(25,25);
         p.scale(1.25);
-        p.image(this.wario_background,0 ,0);
+        p.image(SPRITES.wario_background,0 ,0);
         p.popMatrix();
 
         p.pushMatrix();
         p.scale(this.logo_size);
-        p.image(this.wario_logo, 190/this.logo_size, 100/this.logo_size);
+        p.image(SPRITES.wario_logo, 190/this.logo_size, 100/this.logo_size);
         p.popMatrix();
 
         p.pushMatrix();
         p.translate(65,275);
         p.scale(.5);
-        p.image(this.option_button,0 , 0 - this.option_offset*2);
-        p.image(this.start_button, 360, 0 - this.start_offset*2);
-        p.image(this.help_button, 700,0 - this.help_offset*2);
+        p.image(SPRITES.option_button,0 , 0 - this.option_offset*2);
+        p.image(SPRITES.start_button, 360, 0 - this.start_offset*2);
+        p.image(SPRITES.help_button, 700,0 - this.help_offset*2);
         p.popMatrix();
 
         p.pushMatrix();
         p.translate(50,100);
         p.scale(3);
-        p.image(this.warioSheet.get(212 + this.offset_wario_dance,827, 45, 50), 0 ,0);
+        p.image(SPRITES.warioSheet.get(212 + this.offset_wario_dance,827, 45, 50), 0 ,0);
         p.popMatrix();
 
         p.pushMatrix();
         p.translate(550,100);
         p.scale(-3,3);
-        p.image(this.warioSheet.get(212 + this.offset_wario_dance,827, 45, 50), 0 ,0);
+        p.image(SPRITES.warioSheet.get(212 + this.offset_wario_dance,827, 45, 50), 0 ,0);
         p.popMatrix();
 
         if (this.started) {
             p.noStroke();
             p.fill(0,0,0,this.start_close_opq+=2);
             p.rect(30,30,540,340);
-            const elapsed = Date.now() - this.transistionStart;
+            const elapsed = millis() - this.transistionStart;
 
             if (this.start_close_opq >= 255 && elapsed > 2500) {
                 this.game.changeState(new CounterState());
             }
         }
         else{
-            this.transistionStart = Date.now();
+            this.transistionStart = millis();
         }
 
     }
@@ -183,23 +190,17 @@ class HelpState extends State{
             }
         }
     }
-    draw(p) {
-        p.fill(255,255,255,0);
-        p.rect(0,0,600-1,400-1);
-        // p.fill(0, 0, 0);
-        // p.textSize(13);
-        // p.textAlign(p.CENTER);
-        
+    draw() {
         p.pushMatrix();
         p.translate(70,45);
         p.scale(1);
-        p.image(this.inner_window,0 ,0);
+        p.image(SPRITES.inner_window,0 ,0);
         p.popMatrix();
 
         p.pushMatrix();
         p.translate(70,45);
         p.scale(.75);
-        //p.image(this.wario_border,0 ,0);
+        //p.image(SPRITES.wario_border,0 ,0);
         p.popMatrix();
         p.textSize(32);
         p.textAlign(p.CENTER);
@@ -236,23 +237,18 @@ class OptionState extends State{
         }
 
     }
-    draw(p) {
-        p.fill(255,255,255,0);
-        p.rect(0,0,600-1,400-1);
-        // p.fill(0, 0, 0);
-        // p.textSize(13);
-        // p.textAlign(p.CENTER);
-        
+
+    draw() {
         p.pushMatrix();
         p.translate(70,45);
         p.scale(1);
-        p.image(this.inner_window,0 ,0);
+        p.image(SPRITES.inner_window,0 ,0);
         p.popMatrix();
 
         p.pushMatrix();
         p.translate(70,45);
         p.scale(.75);
-        //p.image(this.wario_border,0 ,0);
+        //p.image(SPRITES.wario_border,0 ,0);
         p.popMatrix();
         p.textSize(32);
         p.textAlign(p.CENTER);
@@ -263,68 +259,111 @@ class OptionState extends State{
         p.pushMatrix();
         p.translate(215,175);
         p.scale(.75);
-        p.image(this.warioSheet.get(0 + this.offset,996,230,165), 0, 0);
-        p.popMatrix();
-        p.fill(255,255,255);
-        p.textSize(15)
-        p.text("WarioWare - Options", 145, 59);
-    }    
 
+        p.image(SPRITES.warioSheet.get(0,996,230,165), 0, 0);
+        p.popMatrix();
+    }
 }
-// Shows current stage number and health
-class CounterState extends State {
-    level;
-    levelStart;
-    start_open_opq = 255;
-    constructor() {
+
+class CurtainState extends State {
+    duration;
+    direction;
+
+    startTime;
+
+    constructor(direction, duration=800) {
         super();
 
-        this.level = 0;
-        this.levelStart = Date.now();
+        this.direction = direction;
+        this.duration = duration;
+
+        this.startTime = millis();
     }
 
     update(delta) {
-        const elapsed = Date.now() - this.levelStart;
-
-        // Move to game after 5 seconds
-        if (elapsed >= 2800) {
-            const microgame = randomMicrogame();
-            const duration = 5 + (5 - this.level/2);
-
-            this.game.pushState(new MicrogameState(microgame, duration));
+        // Exit state when the animation is complete
+        if (millis() - this.startTime > this.duration) {
+            this.game.popState();
         }
     }
 
-    draw(p) {
+    draw() {
+        const elapsed = millis() - this.startTime;
+        const elapsedRatio = elapsed/this.duration;
 
-        const elapsed = Date.now() - this.levelStart;
+        let boomboxRatio = 1 - elapsedRatio;
+        if (this.direction === 'open') {
+            boomboxRatio = elapsedRatio;
 
-        //p.rect(0,0,600-1,400-1);
-        p.background(0,0,255);
+            this.game.previousState(this).draw();
 
-        let curtainRatio = 0;
-        if (elapsed > 2000) {
-            curtainRatio = (2000 - elapsed)/2;
-
+            // Fade
+            p.fill(0, 0, 0, (1 - elapsedRatio) * 255);
+            p.rect(0, 0, 600, 400);
         }
-        else{
-            curtainRatio = 0;
-
-        }
-
+        
+        // Slide halves of boombox
         p.pushMatrix();
         p.translate(30 ,30);
         p.scale(.90);
-        p.image(this.left_boom, 0 + curtainRatio, 0);
+        p.image(SPRITES.left_boom, 0 - 400*boomboxRatio, 0);
         p.popMatrix();
         p.pushMatrix();
         p.scale(.90);
         p.translate(300 ,30);
-        p.image(this.right_boom, 33 - curtainRatio, 3);
+        p.image(SPRITES.right_boom, 33 + 400*boomboxRatio, 3);
         p.popMatrix();
-        p.image(this.wario_border,0 ,0);
-        p.fill(0,0,0,this.start_open_opq -= 2);
-        p.rect(30,30,540,340);
+    }
+}
+
+// Shows current stage number and health
+class CounterState extends State {
+    level;
+    
+    elapsed = 0;
+
+    constructor() {
+        super();
+
+        this.level = 0;
+    }
+
+    update(delta) {
+        // Increment levels everytime we enter the counter screen
+        if (this.elapsed === 0) {
+            this.level++;
+        }
+
+        this.elapsed += delta;
+
+        // Move to game after 5 seconds
+        if (this.elapsed >= 2000) {
+            const microgame = randomMicrogame();
+            const duration = (5 + (5 - this.level/2)) * 1000;
+
+            // Reset the time elapsed in the counter
+            this.elapsed = 0;
+
+            // Create the minigame and curtain over it
+            this.game.pushState(new MicrogameState(microgame, duration));
+            this.game.pushState(new CurtainState('open'));
+        }
+    }
+
+    draw() {
+        p.pushMatrix();
+        p.translate(30 ,30);
+        p.scale(.90);
+        p.image(SPRITES.left_boom, 0, 0);
+        p.popMatrix();
+
+        p.pushMatrix();
+        p.scale(.90);
+        p.translate(300 ,30);
+        p.image(SPRITES.right_boom, 33, 3);
+        p.popMatrix();
+
+        p.image(SPRITES.wario_border,0 ,0);
     }
 }
 
@@ -332,27 +371,29 @@ class CounterState extends State {
 class MicrogameState extends State {
     microgame;
     duration;
-    startTime;
 
-    playing = false;
+    elapsed = 0;
 
     constructor(microgame, duration) {
         super();
 
         this.microgame = new microgame();
         this.duration = duration;
-
-        this.startTime = Date.now();
     }
 
     update(delta) {
+        this.elapsed += delta;
+
         // Time's up
-        if (this.startTime + this.duration > Date.now()) {
-            this.playing = false;
+        if (this.elapsed > this.duration) {
+            this.game.changeState(new CurtainState('close'));
+            return;
         }
 
         // Update microgame
         const status = this.microgame.update(delta);
+
+        // Handle game over
         if (status === 'won') {
             // change state to winning screen
 
@@ -361,17 +402,37 @@ class MicrogameState extends State {
         }
     }
 
-    draw(p) {
+    draw() {
         // Draw game
-        this.microgame.draw(p);
+        this.microgame.draw();
 
-        p.fill(0, 0, 0);
-        p.textSize(13);
-        p.textAlign(p.CENTER);
+        // Draw border
+        switch (this.microgame.border) {
+        case 'purple':
+            setBorderBg(160, 80, 200);
+            p.image(SPRITES.borders.purple);
+            break;
 
+        case 'tv':
+            setBorderBg(23, 23, 23);
+            p.image(SPRITES.borders.tv);
+            break;
+        }
 
-        const elapsed = Date.now() - this.startTime;
+        const elapsedRatio = this.elapsed/this.duration;
 
+        // Draw bomb and its fuse
+        const trailIdx = Math.floor((0.99999999 - elapsedRatio)*SPRITES.bomb.trail.length);
+        p.image(SPRITES.bomb.trail[trailIdx], 10, 400 - 40 - 5);
 
+        // Draw flame on end of fuse
+        const flameInterval = this.duration/50;
+        const flameIdx = Math.floor(this.elapsed/flameInterval) % SPRITES.bomb.flame.length;
+        const flameOffset = [
+            [47, -35], [80, 0], [195, 0], [315, 0], [435, 0], [555, 0]
+        ];
+        p.image(SPRITES.bomb.flame[flameIdx],
+            10 + flameOffset[trailIdx][0],
+            400 - 40 - 5 + flameOffset[trailIdx][1]);
     }
 }
