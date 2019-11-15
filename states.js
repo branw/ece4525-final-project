@@ -384,6 +384,11 @@ class MicrogameState extends State {
         this.duration = duration;
     }
 
+    setGame(game) {
+        super.setGame(game);
+        this.microgame.setGame(game);
+    }
+
     update(delta) {
         this.elapsed += delta;
 
