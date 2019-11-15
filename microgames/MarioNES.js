@@ -8,15 +8,17 @@ class MarioNESGame extends Microgame {
     arrow_blink = 1;
     arrow_timer = 0;
 
+    banana_timer = 0;
+
     SPIN_Y = 0;
     frames = [
-        {"start" : [0,0],   "size" : [120, 290]},
-        {"start" : [120,0], "size" : [120, 290]},
-        {"start" : [250,0], "size" : [120, 290]},
-        {"start" : [390,0], "size" : [170, 290]},
-        {"start" : [560,0], "size" : [170, 290]},
-        {"start" : [735,0],   "size" : [170, 290]},
-        {"start" : [915,0],   "size" : [270, 290]}
+        {"start" : [0,0],   "size" : [120, 290], "offset" : [0, 0]},
+        {"start" : [120,0], "size" : [120, 290], "offset" : [15,0]},
+        {"start" : [255,0], "size" : [120, 290], "offset" : [15, 0]},
+        {"start" : [395,0], "size" : [170, 290], "offset" : [-10, 0]},
+        {"start" : [560,0], "size" : [170, 290], "offset" : [-10, 0]},
+        {"start" : [735,0],   "size" : [170, 290], "offset" : [-10, 0]},
+        {"start" : [915,0],   "size" : [270, 290], "offset" : [-45, 0]}
     ]
     curFrame = 0;
     next_input = 0;
@@ -39,9 +41,9 @@ class MarioNESGame extends Microgame {
     draw() {
         p.background(200, 160, 0);
         p.pushMatrix();
-        p.translate(60,30);
+        p.translate(45,30);
         p.scale(1.05);
-        p.image(SPRITES.m_banana.get(710,382, 480,318), 0,0);
+        p.image(SPRITES.m_banana.get(710,382, 480,318), 0,0); // background sprite
         p.popMatrix();
         if(this.state === "direction" || this.state === "play"){
             p.pushMatrix();
@@ -65,12 +67,27 @@ class MarioNESGame extends Microgame {
             }
             //    const keyMapping = { 37: 'left', 38: 'up', 39: 'right', 40: 'down' };
 
-            if(this.game.keys['left']){
-                p.pushMatrix();
-                imageFrame(SPRITES.m_banana, this.frames[this.curFrame]);
-                p.popMatrix(); 
-                this.curFrame++;  
+            // if(this.game.keys['left']){ // no access to the keys yet
+            //     p.pushMatrix();
+            //     imageFrame(SPRITES.m_banana, this.frames[this.curFrame]);
+            //     p.popMatrix(); 
+            //     this.curFrame++;  
+            // } 
+            if(this.elapsed - this.banana_timer > 400){ // no access to the keys yet
+
+                if(this.curFrame === this.frames.length - 1){
+                    this.curFrame = 0;
+                }
+                else{
+                    this.curFrame++;
+                }
+                this.banana_timer = this.elapsed; 
+
             } 
+            p.pushMatrix();
+            p.translate(230, 70);
+            imageFrame(SPRITES.m_banana, this.frames[this.curFrame]);
+            p.popMatrix(); 
 
             
         }
@@ -89,7 +106,7 @@ class MarioNESGame extends Microgame {
 }
 
 function imageFrame(s_image, iframe){
-    p.image(s_image.get(iframe["start"][0], iframe["start"][1], iframe["size"][0], iframe["size"][1] ));
+    p.image(s_image.get(iframe["start"][0], iframe["start"][1], iframe["size"][0], iframe["size"][1]),iframe["offset"][0], iframe["offset"][1] );
 }
 
 function returnText(character){
