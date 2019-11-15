@@ -39,7 +39,7 @@ class MarioNESGame extends Microgame {
     }   
 
     draw() {
-        p.background(200, 160, 0);
+        p.background(200, 160, 0); // gay yello
         p.pushMatrix();
         p.translate(45,30);
         p.scale(1.05);
@@ -88,11 +88,8 @@ class MarioNESGame extends Microgame {
             p.translate(230, 70);
             imageFrame(SPRITES.m_banana, this.frames[this.curFrame]);
             p.popMatrix(); 
-
             
-        }
-              
-
+            }
         }
         else if(this.state === "lose"){
 
