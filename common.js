@@ -18,7 +18,8 @@ function initSprites() {
         // For MicrogameState
         'borders': {
             'purple': p.loadImage('./resources/border_purple.png'),
-            'tv': p.loadImage('./resources/border_tv.png')
+            'mustard': p.loadImage('./resources/border_mustard.png'),
+            'tv': p.loadImage('./resources/border_tv.png'),
         },
         'bomb': {
             'trail': [
@@ -34,8 +35,12 @@ function initSprites() {
                 p.loadImage('./resources/bomb_flame1.png')
             ],
         },
+        
         'text' : p.loadImage('./resources/text.png'),
-        'm_banana' : p.loadImage('./resources/m_banana/banana.png')
+
+        // For BananaMunch
+        'm_banana' : p.loadImage('./resources/m_banana/banana.png'),
+        'm_banana_bg' : p.loadImage('./resources/m_banana/banana_bg.png')
     };
 }
 
@@ -61,4 +66,43 @@ function setBg(r, g, b) {
 
 function millis() {
     return Date.now();
+}
+
+function imageFrame(s_image, iframe) {
+    p.image(s_image.get(iframe["start"][0], iframe["start"][1], iframe["size"][0], iframe["size"][1]), iframe["offset"][0], iframe["offset"][1]);
+}
+
+
+function warioText(str) {
+    const alphabet = [12, 44, 76, 108, 138, 170, 200, 232, 260, 290, 322, 352, 382, 418, 450, 482, 514, 546, 576, 606, 638, 668, 700, 734, 768, 800, 0];
+    const specials = {
+        // startX, startY, width, height
+        '!': [794, 64, 18, 32]
+    };
+
+    let x = 0;
+
+    str = str.toUpperCase();
+    for (let i = 0; i < str.length; i++) {
+        // Whitespace
+        if (str[i] === ' ') {
+            x += 12;
+        }
+        // Special characters
+        else if (specials.hasOwnProperty(str[i])) {
+            const data = specials[str[i]];
+
+            p.image(SPRITES.text.get(data[0], data[1], data[2], data[3]), x, -2);
+            x += data[3];
+        }
+        // Alphabetic characters
+        else if (str[i] != str[i].toLowerCase()) {
+            const pos = str.charCodeAt(i) - 'A'.charCodeAt(0);
+            const start = alphabet[pos];
+            const width = alphabet[pos + 1] - start;
+
+            p.image(SPRITES.text.get(start, 2, width, 30), x, 0);
+            x += width;
+        }
+    }
 }

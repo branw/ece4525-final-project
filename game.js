@@ -3,6 +3,8 @@ class Game {
     mouse = {};
     states = [];
 
+    level = 0;
+
     pushState(newState) {
         newState.setGame(this);
 

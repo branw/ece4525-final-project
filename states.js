@@ -33,9 +33,7 @@ class IntroState extends State {
     help_offset = 0;
     bounce_speed = 100;
 
-
     update(delta) {
-        this.game.changeState(new CounterState()); // remove after finish testing
         if (this.game.mouse['left']) {
             // options button pressed
 
@@ -51,7 +49,6 @@ class IntroState extends State {
             // check if help button pressed
             if (inBoundingBox(410,275, 410+125, 275+30, p.mouseX, p.mouseY)){
                 this.game.changeState(new HelpState());
-
             }
         }
 
@@ -125,7 +122,9 @@ class IntroState extends State {
             return;
         }
 
-        setBg(0xb8, 0xb8, 0xb8);
+        if (!this.started) {
+            setBg(0xb8, 0xb8, 0xb8);
+        }
 
         //p.background(255, 255, 255);
         p.fill(255,255,255,0);
@@ -167,19 +166,18 @@ class IntroState extends State {
         p.popMatrix();
 
         if (this.started) {
-            p.noStroke();
-            p.fill(0,0,0,this.start_close_opq+=2);
-            p.rect(30,30,540,340);
-            const elapsed = millis() - this.transistionStart;
+            setBorderBg(0, 0, 0);
 
-            if (this.start_close_opq >= 255 && elapsed > 2500) {
+            const elapsed = millis() - this.transistionStart;
+            p.noStroke();
+            p.fill(0, 0, 0, elapsed/800 * 255);
+            p.rect(0, 0, 600, 400);//30,30,540,340);
+            
+
+            if (elapsed > 800) {
                 this.game.changeState(new CounterState());
             }
         }
-        else{
-            this.transistionStart = millis();
-        }
-
     }
 }
 
@@ -229,14 +227,14 @@ class OptionState extends State{
                     this.game.changeState(new IntroState());
             }
         }
-        if(Date.now() - this.wario_timer > 300){
+        if(millis() - this.wario_timer > 300){
             if(this.offset == 0){
                 this.offset = 245;
             }
             else{
                 this.offset = 0;
             }
-            this.wario_timer = Date.now();
+            this.wario_timer = millis();
         }
 
     }
@@ -307,34 +305,27 @@ class CurtainState extends State {
         
         // Slide halves of boombox
         p.pushMatrix();
-        p.translate(30 ,30);
-        p.scale(.90);
-        p.image(SPRITES.left_boom, 0 - 400*boomboxRatio, 0);
+        p.image(SPRITES.left_boom, -400*boomboxRatio, 0);
         p.popMatrix();
         p.pushMatrix();
-        p.scale(.90);
-        p.translate(300 ,30);
-        p.image(SPRITES.right_boom, 33 + 400*boomboxRatio, 3);
+        p.translate(300, 0);
+        p.image(SPRITES.right_boom, 400*boomboxRatio, 0);
         p.popMatrix();
     }
 }
 
 // Shows current stage number and health
 class CounterState extends State {
-    level;
-    
     elapsed = 0;
 
     constructor() {
         super();
-
-        this.level = 0;
     }
 
     update(delta) {
         // Increment levels everytime we enter the counter screen
         if (this.elapsed === 0) {
-            this.level++;
+            this.game.level++;
         }
 
         this.elapsed += delta;
@@ -342,7 +333,8 @@ class CounterState extends State {
         // Move to game after 5 seconds
         if (this.elapsed >= 2000) {
             const microgame = randomMicrogame();
-            const duration = (5 + (5 - this.level/2)) * 1000;
+            const duration = (5 + Math.max(4 - this.game.level/2, 0)) * 1000;
+            console.log('Level ' + this.game.level + ' "' + microgame.name + '" for ' + duration/1000 + ' s');
 
             // Reset the time elapsed in the counter
             this.elapsed = 0;
@@ -354,19 +346,17 @@ class CounterState extends State {
     }
 
     draw() {
+        setBorderBg(0, 0, 0);
+
         p.pushMatrix();
-        p.translate(30 ,30);
-        p.scale(.90);
+        p.translate(0, 0);
         p.image(SPRITES.left_boom, 0, 0);
         p.popMatrix();
 
         p.pushMatrix();
-        p.scale(.90);
-        p.translate(300 ,30);
-        p.image(SPRITES.right_boom, 33, 3);
+        p.translate(300, 0);
+        p.image(SPRITES.right_boom, 0, 0);
         p.popMatrix();
-
-        p.image(SPRITES.wario_border,0 ,0);
     }
 }
 
@@ -390,23 +380,22 @@ class MicrogameState extends State {
     }
 
     update(delta) {
-        this.elapsed += delta;
-
-        // Time's up
-        if (this.elapsed > this.duration) {
-            this.game.changeState(new CurtainState('close'));
-            return;
-        }
-
         // Update microgame
         const status = this.microgame.update(delta);
+        
+        // Count elapsed time when playing the game
+        if (status !== 'intro') {
+            this.elapsed += delta;
+        }
 
-        // Handle game over
-        if (status === 'won') {
-            // change state to winning screen
+        // If the game timed out or is over
+        const timesUp = this.elapsed > this.duration;
+        if (timesUp) {
+            const won = (status === 'win');
 
-        } else if (status === 'lost') {
-            // change state to losing screen
+            //TODO lives
+
+            this.game.changeState(new CurtainState('close'));
         }
     }
 
@@ -419,6 +408,11 @@ class MicrogameState extends State {
         case 'purple':
             setBorderBg(160, 80, 200);
             p.image(SPRITES.borders.purple);
+            break;
+
+        case 'mustard':
+            setBorderBg(200, 160, 0);
+            p.image(SPRITES.borders.mustard);
             break;
 
         case 'tv':
