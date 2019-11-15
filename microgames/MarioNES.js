@@ -5,33 +5,76 @@ class MarioNESGame extends Microgame {
     elapsed = 0;
     total_spin = 0;
 
+    arrow_blink = 1;
+    arrow_timer = 0;
+
+    SPIN_Y = 0;
+    frames = [
+        {"start" : [0,0],   "size" : [120, 290]},
+        {"start" : [120,0], "size" : [120, 290]},
+        {"start" : [250,0], "size" : [120, 290]},
+        {"start" : [390,0], "size" : [170, 290]},
+        {"start" : [560,0], "size" : [170, 290]},
+        {"start" : [735,0],   "size" : [170, 290]},
+        {"start" : [915,0],   "size" : [270, 290]}
+    ]
+    curFrame = 0;
+    next_input = 0;
     constructor(){
         super();
     }
 
     update(delta) {
         this.elapsed += delta;
-
-        if(this.elapsed > 300){
+        if(this.elapsed > 800){
             this.state = "play";
         }
+        if(this.elapsed - this.arrow_timer > 150){
+            this.arrow_blink *= -1;
+            this.arrow_timer = this.elapsed;
+        }
+
     }   
 
     draw() {
-        p.background(120, 0, 0);
-
-        if(this.state === "direction"){
+        p.background(200, 160, 0);
+        p.pushMatrix();
+        p.translate(60,30);
+        p.scale(1.05);
+        p.image(SPRITES.m_banana.get(710,382, 480,318), 0,0);
+        p.popMatrix();
+        if(this.state === "direction" || this.state === "play"){
             p.pushMatrix();
-            p.translate(50,100);
+            p.translate(170 ,100 - this.SPIN_Y);
+            p.scale(2);
             returnText("SPIN!"); //ABCDEFGHIJKLMNOPQRSTUV
             p.popMatrix();
-            p.pushMatrix();
-            p.translate(150,120);
-            p.image(SPRITES.text.get(673,215, 28,20),0,0);
-            p.popMatrix();
 
+
+            if(this.arrow_blink > 0  || this.state === "play"){
+                p.pushMatrix();
+                p.translate(265,200 + this.SPIN_Y);
+                p.scale(3);
+                p.image(SPRITES.text.get(673,215, 28,20), 0,0);
+                p.popMatrix();  
+            }
+
+        if(this.state === "play"){
+            if(this.SPIN_Y < 300){
+                this.SPIN_Y += 10;  
+            }
+            //    const keyMapping = { 37: 'left', 38: 'up', 39: 'right', 40: 'down' };
+
+            if(this.game.keys['left']){
+                p.pushMatrix();
+                imageFrame(SPRITES.m_banana, this.frames[this.curFrame]);
+                p.popMatrix(); 
+                this.curFrame++;  
+            } 
+
+            
         }
-        else if(this.state === "play"){
+              
 
         }
         else if(this.state === "lose"){
@@ -43,6 +86,10 @@ class MarioNESGame extends Microgame {
 
         
     }
+}
+
+function imageFrame(s_image, iframe){
+    p.image(s_image.get(iframe["start"][0], iframe["start"][1], iframe["size"][0], iframe["size"][1] ));
 }
 
 function returnText(character){

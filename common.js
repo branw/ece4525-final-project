@@ -34,7 +34,8 @@ function initSprites() {
                 p.loadImage('./resources/bomb_flame1.png')
             ],
         },
-        'text' : p.loadImage('./resources/text.png')
+        'text' : p.loadImage('./resources/text.png'),
+        'm_banana' : p.loadImage('./resources/m_banana/banana.png')
     };
 }
 
