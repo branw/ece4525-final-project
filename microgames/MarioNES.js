@@ -22,9 +22,6 @@ class MarioNESGame extends Microgame {
     ]
     curFrame = 0;
     next_input = 0;
-    constructor(){
-        super();
-    }
 
     update(delta) {
         this.elapsed += delta;
@@ -65,15 +62,15 @@ class MarioNESGame extends Microgame {
             if(this.SPIN_Y < 300){
                 this.SPIN_Y += 10;  
             }
-            //    const keyMapping = { 37: 'left', 38: 'up', 39: 'right', 40: 'down' };
 
-            // if(this.game.keys['left']){ // no access to the keys yet
-            //     p.pushMatrix();
-            //     imageFrame(SPRITES.m_banana, this.frames[this.curFrame]);
-            //     p.popMatrix(); 
-            //     this.curFrame++;  
-            // } 
-            if(this.elapsed - this.banana_timer > 400){ // no access to the keys yet
+            if (this.game.keys['left'] && this.curFrame < this.frames.length) {
+                p.pushMatrix();
+                imageFrame(SPRITES.m_banana, this.frames[this.curFrame]);
+                p.popMatrix(); 
+                this.curFrame++;  
+            } 
+
+            if(this.elapsed - this.banana_timer > 400){
 
                 if(this.curFrame === this.frames.length - 1){
                     this.curFrame = 0;
@@ -100,8 +97,6 @@ class MarioNESGame extends Microgame {
         else if(this.state === "win"){
 
         }
-
-        
     }
 }
 
@@ -109,34 +104,37 @@ function imageFrame(s_image, iframe){
     p.image(s_image.get(iframe["start"][0], iframe["start"][1], iframe["size"][0], iframe["size"][1]),iframe["offset"][0], iframe["offset"][1] );
 }
 
-function returnText(character){
-    // A =  12,2
-    let curCursor = 0;
-    let lookup = [12,44,76,108,138,170,200,232,260,290,322,352,382,418,450,482,514,546,576,606,638,668,700,734,768,800,0];
-    let charWidth = 0;
-    for(let i=0;i < character.length;i++){
-        if(character[i] === "!"){
-            p.image(SPRITES.text.get(794, 64, 18, 32) ,curCursor , -2);
-            curCursor += 32; 
+function returnText(str){
+    const alphabet = [12,44,76,108,138,170,200,232,260,290,322,352,382,418,450,482,514,546,576,606,638,668,700,734,768,800,0];
+    const specials = {
+        // startX, startY, width, height
+        '!': [794, 64, 18, 32]
+    };
+
+    let x = 0;
+
+    str = str.toUpperCase();
+    for(let i = 0; i < str.length; i++){
+        // Whitespace
+        if (str[i] === ' ') {
+            x += 12;
         }
-        else{
-            const offset =  character.charCodeAt(i) - "A".charCodeAt(0);
-            if(character[i] === "M"){
-                charWidth = 4
-            }
-            else{
-                charWidth = 0;
-            }
-            if(character.charCodeAt(i) === 32){
-                curCursor += 12;
-            }
-            else{
-                p.image(SPRITES.text.get(lookup[offset], 2, 30 + charWidth, 30) ,curCursor , 0);
-                curCursor += 32 + charWidth;    
-            }
-  
+        // Special characters
+        else if (specials.hasOwnProperty(str[i])) {
+            const data = specials[str[i]];
+
+            p.image(SPRITES.text.get(data[0], data[1], data[2], data[3]), x, -2);
+            x += data[3]; 
         }
-        
+        // Alphabetic characters
+        else if (str[i] != str[i].toLowerCase()) {
+            const pos = str.charCodeAt(i) - 'A'.charCodeAt(0);
+            const start = alphabet[pos];
+            const width = alphabet[pos + 1] - start;
+
+            p.image(SPRITES.text.get(start, 2, width, 30), x, 0);
+            x += width;
+        }        
     }
 
 }
