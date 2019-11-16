@@ -124,11 +124,11 @@ class DuckHunt extends Microgame {
 
         // Randomize duck starting location and path
         
-        this.numDucks = (Math.random() < 0.8) ? 1 : 2;
+        this.numDucks = (Math.random() < 0.5) ? 1 : 2;
         for (let i = 0; i < this.numDucks; i++) {
             const x = 300, y = 300 + 20 * i;
             const xDirection = (Math.random() >= 0.5) ? 1 : -1;
-            const speed = 3 + Math.random()*2;
+            const speed = 2 + Math.random()*3;
             this.ducks.push(new Duck(x, y, xDirection, speed));
         }
 
