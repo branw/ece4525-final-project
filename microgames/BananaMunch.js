@@ -60,14 +60,14 @@ class BananaMunch extends Microgame {
     update(delta) {
         this.elapsed += delta;
 
-        // Blink arrow keys
-        if (this.elapsed - this.arrow_timer > this.blink) {
-            this.arrow_blink *= -1;
-            this.arrow_timer = this.elapsed;
-        }
-
         switch (this.state) {
         case 'intro': 
+            // Blink arrow keys
+            if (this.elapsed - this.arrow_timer > this.blink) {
+                this.arrow_blink *= -1;
+                this.arrow_timer = this.elapsed;
+            }
+
             if (this.elapsed > 800) {
                 this.state = "play";
             }

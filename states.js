@@ -6,17 +6,6 @@ class State {
     }
 }
 
-function inBoundingBox(x1,y1,x2,y2,px,py){
-    // check if point is inside bounding box
-    if(px >=x1 && px <= x2 && py >=y1 && py <= y2 ){
-        return true;
-    }
-    else{
-        return false;
-    }
-}
-
-
 class IntroState extends State {
     started = false;
     transistionStart = 0;
@@ -424,7 +413,7 @@ class MicrogameState extends State {
         const elapsedRatio = this.elapsed/this.duration;
 
         // Draw bomb and its fuse
-        const trailIdx = Math.floor((0.99999999 - elapsedRatio)*SPRITES.bomb.trail.length);
+        const trailIdx = Math.max(Math.floor((0.99999999 - elapsedRatio)*SPRITES.bomb.trail.length), 0);
         p.image(SPRITES.bomb.trail[trailIdx], 10, 400 - 40 - 5);
 
         // Draw flame on end of fuse
