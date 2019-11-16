@@ -78,6 +78,9 @@ function imageFrame(s_image, iframe) {
     p.image(s_image.get(iframe["start"][0], iframe["start"][1], iframe["size"][0], iframe["size"][1]), iframe["offset"][0], iframe["offset"][1]);
 }
 
+function setCursor(active) {
+    document.querySelector('canvas').style.cursor = active ? "pointer" : "auto";
+}
 
 function warioText(str) {
     const alphabet = [12, 44, 76, 108, 138, 170, 200, 232, 260, 290, 322, 352, 382, 418, 450, 482, 514, 546, 576, 606, 638, 668, 700, 734, 768, 800, 0];
