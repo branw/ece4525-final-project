@@ -27,7 +27,7 @@ class IntroState extends State {
             // options button pressed
 
             if (inBoundingBox(60,275,60+160,275+30, p.mouseX, p.mouseY)){
-                this.game.changeState(new OptionState());
+                this.game.pushState(new OptionState());
 
             }
             // check start button pressed
@@ -37,11 +37,12 @@ class IntroState extends State {
             }
             // check if help button pressed
             if (inBoundingBox(410,275, 410+125, 275+30, p.mouseX, p.mouseY)){
-                this.game.changeState(new HelpState());
+                this.game.pushState(new HelpState());
             }
         }
 
         if (inBoundingBox(60,275,60+160,275+30, p.mouseX, p.mouseY)){
+            setCursor(true);
             if(millis() - this.bounceTimer > this.bounce_speed){
                 if(this.option_offset == 0){
                     this.option_offset = 5;
@@ -54,6 +55,7 @@ class IntroState extends State {
         }
         // check start button pressed
         else if (inBoundingBox(240,275,240+150,275+30, p.mouseX, p.mouseY)){
+            setCursor(true);
             if(millis() - this.bounceTimer > this.bounce_speed){
                 if(this.start_offset == 0){
                     this.start_offset = 5;
@@ -66,6 +68,7 @@ class IntroState extends State {
         }
         // check if help button pressed
         else if (inBoundingBox(410,275, 410+125, 275+30, p.mouseX, p.mouseY)){
+            setCursor(true);
             if(millis() - this.bounceTimer > this.bounce_speed){
                 if(this.help_offset == 0){
                     this.help_offset = 5;
@@ -78,6 +81,7 @@ class IntroState extends State {
 
         }
         else{
+            setCursor(false);
             this.help_offset = 0;
             this.start_offset = 0;
             this.option_offset = 0;
@@ -164,6 +168,7 @@ class IntroState extends State {
             
 
             if (elapsed > 800) {
+                setCursor(false);
                 this.game.changeState(new CounterState());
             }
         }
@@ -205,27 +210,34 @@ class HelpState extends State{
     }    
 }
 
-class OptionState extends State{
-    wario_timer = 3000;
-    offset = 0;
+class OptionState extends State {
     update(delta) {
-    // check close button pressed
-        if (this.game.mouse['left']) {
-            if (inBoundingBox(449,77,449+22,77+ 25, p.mouseX, p.mouseY)){
-                    console.log("exit button pressed");
-                    this.game.changeState(new IntroState());
+        // Handle exit button click
+        if (isPointInRect(449,77,22,25, p.mouseX, p.mouseY)) {
+            setCursor(true);
+            if (this.game.mouse['left']) {
+                this.game.popState();
+            }    
+        }
+        
+        // Handle difficulty selector click
+        else if (isPointInRect(300, 158, 180, 25, p.mouseX, p.mouseY)) {
+            setCursor(true);
+            if (this.game.mouse['left']) {
+                if (p.mouseX < 360) {
+                    this.game.difficulty = 0;
+                }
+                else if (p.mouseX < 420) {
+                    this.game.difficulty = 1;
+                }
+                else {
+                    this.game.difficulty = 2;
+                }
             }
         }
-        if(millis() - this.wario_timer > 300){
-            if(this.offset == 0){
-                this.offset = 245;
-            }
-            else{
-                this.offset = 0;
-            }
-            this.wario_timer = millis();
+        else {
+            setCursor(false);
         }
-
     }
 
     draw() {
@@ -236,21 +248,42 @@ class OptionState extends State{
         p.popMatrix();
 
         p.pushMatrix();
-        p.translate(70,45);
-        p.scale(.75);
-        //p.image(SPRITES.wario_border,0 ,0);
+        p.scale(1.1);
+        p.translate(160, 75);
+        warioText('Options');
         p.popMatrix();
-        p.textSize(32);
-        p.textAlign(p.CENTER);
-        p.fill(0,0,0);
-        p.text("Game Options", 300,110);
-        p.textSize(16);
-        p.text("No options available yet!", 300, 160);
-        p.pushMatrix();
-        p.translate(215,175);
-        p.scale(.75);
 
-        p.image(SPRITES.warioSheet.get(0,996,230,165), 0, 0);
+        p.pushMatrix();
+        p.translate(100, 160);
+        p.scale(0.6);
+        warioText('Difficulty');
+        p.popMatrix();
+
+        // Select background
+        p.stroke(0, 0, 0);
+        p.fill(255, 255, 255);
+        p.rect(300, 158, 180, 25);
+
+        // Select active item
+        const highlightOffset = this.game.difficulty * 60;
+        p.fill(0xb0, 0xc8, 0xf8);
+        p.rect(300 + highlightOffset, 158, 60, 25);
+
+        // Select text
+        p.pushMatrix();
+        p.translate(305, 165);
+        p.scale(0.4);
+        warioText('Easy');
+        p.popMatrix();
+        p.pushMatrix();
+        p.translate(365, 165);
+        p.scale(0.4);
+        warioText('Mild');
+        p.popMatrix();
+        p.pushMatrix();
+        p.translate(425, 165);
+        p.scale(0.4);
+        warioText('Hard');
         p.popMatrix();
     }
 }
