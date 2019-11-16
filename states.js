@@ -182,6 +182,10 @@ class IntroState extends State {
 }
 
 class HelpState extends State{
+    elapsed = 0;
+    blink_timer = 0;
+    blink_dir = 1;
+
     update(delta) {
     // check close button pressed
         if (this.game.mouse['left']) {
@@ -190,6 +194,13 @@ class HelpState extends State{
                     this.game.changeState(new IntroState());
             }
         }
+        this.elapsed += delta;
+
+        if(this.elapsed - this.blink_timer > 400){
+            this.blink_dir  *= -1;
+            this.blink_timer = this.elapsed; 
+        }
+
     }
     draw() {
         p.pushMatrix();
@@ -202,14 +213,63 @@ class HelpState extends State{
         p.translate(70,45);
         p.scale(.75);
         //p.image(SPRITES.wario_border,0 ,0);
+        let scale = .5;
+
         p.popMatrix();
-        p.textSize(32);
+        //p.textSize(32);
         p.textAlign(p.CENTER);
         p.fill(0,0,0);
-        p.text("Quick Help Guide", 300,110);
+        //p.text("Help Guide", 300,110);
+        p.pushMatrix();
+        p.translate(150,80);
+        warioText("HELP GUIDE");
+        p.popMatrix();
         p.textSize(16);
-        p.text("Follow the instruction displayed during the \nstart of the minigame", 300, 160);
+        p.text("Each game will have a one word instruction!\nIt is your responsiblilty to decipher\nand complete the minigame!", 290, 140);
+        p.pushMatrix();
+        p.translate(130,194);
+        p.scale(scale);
+        warioText("SPIN!");
+        p.scale(1/scale);
+        p.translate(110,0);
+        p.scale(scale);
+        warioText("SHOOT!");
+        p.scale(1/scale);
+        p.translate(120, 0);
+        p.scale(scale);
+        warioText("BOUNCE!");
+        p.popMatrix();
+
         p.text("Each minigame will either use:\nthe arrow keys, space bar, and/or the mouse", 300, 240);
+
+        let tx = 160;
+        let ty = 235;
+        p.pushMatrix();
+        p.scale(1.2);
+        if(this.blink_dir === 1){
+            
+            p.translate(tx,ty);
+            p.image(SPRITES.text.get(448,214,28,20),0,0); // arrow - no
+            p.translate(70,5);
+            p.image(SPRITES.text.get(704,222,28,12),0,0); // space - no
+            p.translate(70,-6);
+            p.image(SPRITES.text.get(790,214,20,24),0,0); // mouse - no
+        }
+        else{
+            p.translate(tx,ty);
+            p.image(SPRITES.text.get(672,214,28,20),0,0); // arrow - or
+            p.translate(70,5);
+            p.image(SPRITES.text.get(736,222,28,12),0,0); // space - or
+            p.translate(70,-6);
+            p.image(SPRITES.text.get(767,214,20,24),0,0); // mouse - or
+        }
+            p.popMatrix();
+
+
+
+
+
+
         p.fill(255,255,255);
         p.textSize(15)
         p.text("WarioWare - Help Guide", 157, 59);
