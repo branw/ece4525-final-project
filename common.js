@@ -47,6 +47,9 @@ function initSprites() {
             'bg': p.loadImage('./resources/duck_hunt/bg.png'),
             'sheet': p.loadImage('./resources/duck_hunt/sheet.png'),
         },
+        'rainyCat' : {
+            'sheet' : p.loadImage('./resources/rainy_cat/rainy_cat.png')
+        }
     };
 }
 
