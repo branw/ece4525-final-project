@@ -163,9 +163,9 @@ class RainyCat extends Microgame{
             p.translate(162, 0);
             imageFrame(SPRITES.rainyCat.sheet, this.frames[this.flip ? 4 : 7]); // rain
         }
-        p.translate(162,120);
+        p.translate(145,120);
         for(var i =0;i < 5; i++){
-            p.translate(-160,0);
+            p.translate(-155,0);
             if(i != 2){
                 imageFrame(SPRITES.rainyCat.sheet, this.frames[this.flip ? 4 : 7]); // rain
             }
