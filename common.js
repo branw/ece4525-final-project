@@ -255,3 +255,7 @@ function inBoundingBox(x1,y1,x2,y2,px,py){
         return false;
     }
 }
+
+function randInt(min, max) {
+  return Math.floor(min + Math.random() * Math.floor(max-min));
+}
