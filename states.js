@@ -444,8 +444,8 @@ class CounterState extends State {
             this.lastLives = this.game.lives;
             this.game.level++;
 
+            // Select level duration/difficulty
             const lastDuration = this.gameDuration;
-
             if (this.game.level === 10) {
                 this.gameDuration = 3000;
             }
@@ -459,6 +459,7 @@ class CounterState extends State {
                 this.gameDuration = 7000;
             }
 
+            // Indicate that the next level will be quicker/harder
             this.speedup = (lastDuration != this.gameDuration);
         }
 
@@ -491,6 +492,17 @@ class CounterState extends State {
     draw() {
         setBorderBg(0, 0, 0);
 
+        p.pushMatrix();
+        p.translate(0, 0);
+        p.image(SPRITES.left_boom, 0, 0);
+        p.popMatrix();
+
+        p.pushMatrix();
+        p.translate(300, 0);
+        p.image(SPRITES.right_boom, 0, 0);
+        p.popMatrix();
+
+        // Draw lives as VU meters
         const vuFrames = [
             [[0*80, 0], [80, 40]],
             [[1*80, 0], [80, 40]],
@@ -504,16 +516,6 @@ class CounterState extends State {
             [[9*80, 0], [80, 40]],
             [[10*80, 0], [80, 40]],
         ];
-
-        p.pushMatrix();
-        p.translate(0, 0);
-        p.image(SPRITES.left_boom, 0, 0);
-        p.popMatrix();
-
-        p.pushMatrix();
-        p.translate(300, 0);
-        p.image(SPRITES.right_boom, 0, 0);
-        p.popMatrix();
 
         const numFrames = vuFrames.length - 1;
         const frameNum = Math.min(8 + Math.floor(8 * Math.sin(this.elapsed/100)), numFrames);
@@ -575,7 +577,8 @@ class MicrogameState extends State {
             (this.elapsed - this.finishedTime) > 2000;
         if (timesUp || finishedLongAgo) {
             // Subtract lives, but leave handling the lives to CounterState
-            const won = (status === 'won');
+            const won = (status === 'won' ||
+                (this.microgame.timerace && status !== 'lost'));
             if (!won) {
                 this.game.lives--;
             }

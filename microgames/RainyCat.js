@@ -1,4 +1,7 @@
 class RainyCat extends Microgame{
+    border = 'none';
+    timerace = true;
+
     state = 'intro';
 
     umbPos = 210;
@@ -55,73 +58,87 @@ class RainyCat extends Microgame{
     }
     ]
 
+    elapsed = 0;
 
     update(delta) {
-        this.flipTimer += delta;
-        this.catWetTimer += delta;
-
-    	if(this.catFrame !== 0){
-	        if (this.game.keys['right']) {
-	        	if(this.umbPos < 420){
-		            this.umbPos+=4;
-	        	}
-
-	        } 
-	        else if (this.game.keys['left']) {
-	    		if(this.umbPos > 10){
-	            	this.umbPos-=4;
-	        	}
-
-	        } 	
-    	}
-    	// keypresses
-
+        this.elapsed += delta;
 
         if(this.flipTimer > 50){
             this.flipTimer = 0;
             this.flip  = !this.flip;
         }
 
-        if(this.catWetTimer > 100){
-        	this.catWetTimer = 0;
-        	this.catWet = !this.catWet;
+        switch (this.state) {
+        case 'intro':
+            if (this.elapsed > 1000) {
+                this.state = 'playing';
+            }
+            break;
+
+        case 'playing': {
+            this.flipTimer += delta;
+            this.catWetTimer += delta;
+
+            if(this.catFrame !== 0){
+                if (this.game.keys['right']) {
+                    if(this.umbPos < 420){
+                        this.umbPos+=4;
+                    }
+
+                } 
+                else if (this.game.keys['left']) {
+                    if(this.umbPos > 10){
+                        this.umbPos-=4;
+                    }
+
+                }   
+            }
+            // keypresses
+
+            if(this.catWetTimer > 100){
+                this.catWetTimer = 0;
+                this.catWet = !this.catWet;
+            }
+
+
+            // check if it hit left boundary
+            if((this.curCatPos + 30 < this.umbPos) || (this.curCatPos + 46 > this.umbPos + 185 + 20)){
+                this.distance = -1;
+                this.catFrame = 0;
+
+                this.state = 'lost';
+                //this.curCatPos += this.curCatDir * 6;
+            }// 185 is the width of the umbrella
+
+            else{
+                if(this.distance === 0){
+                    this.distance = randInt(15, 30);
+                    this.curCatDir *= -1;
+                }
+                else if(this.curCatPos < 30 && this.curCatPos > 0){
+                    this.distance = randInt(15, 30);
+                    this.curCatDir = 1;
+                }
+                else if(this.curCatPos > 540){
+                    this.distance = randInt(15, 30);
+                    this.curCatDir = -1;
+                }
+
+                if(this.gaitChange > 30){
+                    this.catFrame *= -1;
+                    this.gaitChange = 0;
+                }
+                
+                this.curCatPos += this.curCatDir * 3;
+                this.distance -= 3;
+                this.gaitChange += 3;
+            }
+            break;
+        }
         }
 
-
-        // check if it hit left boundary
-        if((this.curCatPos + 30 < this.umbPos) || (this.curCatPos + 46 > this.umbPos + 185 + 20)){
-        	this.distance = -1;
-        	this.catFrame = 0;
-	    	//this.curCatPos += this.curCatDir * 6;
-        }// 185 is the width of the umbrella
-
-        else{
-	        if(this.distance === 0){
-	        	this.distance = randInt(15, 30);
-	        	this.curCatDir *= -1;
-	        }
-	        else if(this.curCatPos < 30 && this.curCatPos > 0){
-	        	this.distance = randInt(15, 30);
-	    		this.curCatDir = 1;
-	    	}
-	    	else if(this.curCatPos > 540){
-	        	this.distance = randInt(15, 30);
-	    		this.curCatDir = -1;
-	    	}
-
-	        if(this.gaitChange > 30){
-		        this.catFrame *= -1;
-		        this.gaitChange = 0;
-	        }
-	        
-	    	this.curCatPos += this.curCatDir * 3;
-	        this.distance -= 3;
-	        this.gaitChange += 3;
-        }
-
-
+        return this.state;
     }
-
 
     draw() {    
         p.background(0, 0, 0);
@@ -172,27 +189,27 @@ class RainyCat extends Microgame{
         }
         p.popMatrix();
 
-        // // out of bounds boxes
-        // p.strokeWeight(2);
-        // p.stroke(255,0,0);
-        // p.line(this.umbPos,0, this.umbPos, 300);
-        // p.line(this.umbPos + 185,0, this.umbPos + 190, 300);
-
-        // p.noFill();
-        // p.rect(this.curCatPos, 255, 60,60);
-        // p.noStroke();
-
-
-
-
-
         p.pushMatrix();
-
         p.translate(this.umbPos, 100 );
         p.scale(1.5);
         imageFrame(SPRITES.rainyCat.sheet, this.frames[5]); // umbrella
         p.popMatrix();
 
+        if (this.state === 'intro') {
+            p.pushMatrix();
+            p.translate(140, 100);
+            p.scale(2);
+            warioText("Cover!");
+            p.popMatrix();
 
+            // Show arrow keys icon
+            if (Math.floor(this.elapsed / 150) % 2 == 0) {
+                p.pushMatrix();
+                p.translate(265, 200);
+                p.scale(3);
+                p.image(SPRITES.text.get(673, 215, 28, 20), 0, 0);
+                p.popMatrix();
+            }
+        }
     }
 }

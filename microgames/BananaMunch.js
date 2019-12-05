@@ -1,5 +1,7 @@
 class BananaMunch extends Microgame {
     border = 'mustard';
+    timerace = false;
+    
     state = 'intro';
     elapsed = 0;
     total_spin = 0;

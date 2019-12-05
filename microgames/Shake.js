@@ -9,6 +9,7 @@ function drawFrame(img, frame, x=0, y=0) {
 
 class Shake extends Microgame {
     border = 'none';
+    timerace = false;
 
     state = 'intro';
 

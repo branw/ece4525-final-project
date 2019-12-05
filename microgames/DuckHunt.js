@@ -98,6 +98,7 @@ function drawFrame(img, frame, x=0, y=0) {
 
 class DuckHunt extends Microgame {
     border = 'tv';
+    timerace = false;
 
     state = 'intro';
 
