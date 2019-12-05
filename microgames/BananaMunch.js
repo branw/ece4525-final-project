@@ -1,7 +1,7 @@
 class BananaMunch extends Microgame {
     border = 'mustard';
     timerace = false;
-    
+
     state = 'intro';
     elapsed = 0;
     total_spin = 0;
@@ -58,6 +58,8 @@ class BananaMunch extends Microgame {
     curFrame = 0;
     next_input = 0;
 
+    lastChangeTime = 0;
+
     update(delta) {
         this.elapsed += delta;
 
@@ -103,11 +105,17 @@ class BananaMunch extends Microgame {
                     this.curFrame++;
                 }
                 changed = 0;
+
+                console.log(this.banana_count)
+
+                if (this.banana_count == 6 || this.banana_count == 13) {
+                    this.lastChangeTime = this.elapsed;
+                }
             }
 
             // Check for win
             if (this.banana_count > 18){
-                this.state = "win";
+                this.state = 'won';
                 this.blink = 300;
                 this.curFrame++;
             }
@@ -152,6 +160,14 @@ class BananaMunch extends Microgame {
                 p.translate(230, 70);
                 imageFrame(SPRITES.m_banana, this.frames[this.curFrame]);
                 p.popMatrix();
+
+                if (this.lastChangeTime > 0 && 
+                        this.elapsed - this.lastChangeTime < 500) {
+                    p.pushMatrix();
+                    p.translate(100, 80);
+                    warioText("KEEP SPINNING!");
+                    p.popMatrix();
+                }
                 
                 break;
 
