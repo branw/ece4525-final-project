@@ -178,15 +178,15 @@ class DuckHunt extends Microgame {
             if (this.shotsRemaining === 0 || this.numDucksRemaining == 0 ||
                     numVisibleDucks === 0) {
                 if (this.numDucksRemaining === 0) {
-                    this.state = 'win';
+                    this.state = 'won';
                 }
                 else {
-                    this.state = 'lose';
+                    this.state = 'lost';
                 }
             }
 
-    case 'win':
-    case 'lose':
+    case 'won':
+    case 'lost':
 
             // Update ducks
             for (let i = 0; i < this.ducks.length; i++) {
@@ -258,7 +258,7 @@ class DuckHunt extends Microgame {
             }
             break;
 
-        case 'win':
+        case 'won':
             const dogHolding = {
                 1: [[0, 150], [92, 110], [-92/2, 0]],
                 2: [[112, 150], [120, 110], [-120/2, 0]]
@@ -273,7 +273,7 @@ class DuckHunt extends Microgame {
 
             break;
 
-        case 'lose':
+        case 'lost':
             const dogTaunting = [
                 [[247, 150], [72, 110], [-72/2, 0]],
                 [[330, 150], [72, 110], [-72/2, 0]]

@@ -18,7 +18,7 @@ new Processing(document.getElementById('game'), function(processingInstance) {
     game.changeState(new IntroState());
 
     // Register input handlers
-    const keyMapping = { 37: 'left', 38: 'up', 39: 'right', 40: 'down' };
+    const keyMapping = { 32: 'space', 37: 'left', 38: 'up', 39: 'right', 40: 'down' };
     p.keyPressed = function() {
         game.keyPressed(keyMapping[p.keyCode]);
     };

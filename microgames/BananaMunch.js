@@ -112,7 +112,7 @@ class BananaMunch extends Microgame {
 
             break;
 
-        case 'win':
+        case 'won':
             this.win_text_off += this.win_text_inc;
             if(Math.abs(this.win_text_off) === 20){
                 this.win_text_inc *= -1;
@@ -153,7 +153,7 @@ class BananaMunch extends Microgame {
                 
                 break;
 
-            case 'win':
+            case 'won':
                 p.pushMatrix();
                 p.translate(220 + this.win_text_off,60);
                 warioText("YUMMY!");
