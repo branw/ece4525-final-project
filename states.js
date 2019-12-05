@@ -400,35 +400,110 @@ class CurtainState extends State {
 class CounterState extends State {
     elapsed = 0;
 
+    microgames;
+    gameDuration;
+
+    lastLives = -1;
+    lastMicrogame;
+
+    state = 'normal';
+    speedup = false;
+
     constructor() {
         super();
+
+        this.microgames = [...microgames];
+        shuffle(this.microgames);
     }
 
     update(delta) {
         // Increment levels everytime we enter the counter screen
         if (this.elapsed === 0) {
+            // Lost last game
+            if (this.lastLives >= 0 && this.lastLives != this.game.lives) {
+                // Out of lives
+                if (this.game.lives == 0) {
+                    this.state = 'dead';
+                }
+                // Still has lives left
+                else {
+                    this.state = 'hurt';
+                }
+
+                // Reinsert the lost microgame into the rotation
+                const index = Math.min(3, this.microgames.length);
+                this.microgames.splice(index, 0, this.lastMicrogame);
+
+                console.log(this.game.lives + ' lives left');
+            }
+            // Just started or won last game
+            else {
+                this.state = 'normal';
+            }
+
+            this.lastLives = this.game.lives;
             this.game.level++;
+
+            const lastDuration = this.gameDuration;
+
+            if (this.game.level === 10) {
+                this.gameDuration = 3000;
+            }
+            else if (this.game.level >= 7) {
+                this.gameDuration = 4500;
+            }
+            else if (this.game.level >= 3) {
+                this.gameDuration = 5500;
+            }
+            else {
+                this.gameDuration = 7000;
+            }
+
+            this.speedup = (lastDuration != this.gameDuration);
         }
 
         this.elapsed += delta;
 
         // Move to game after 5 seconds
         if (this.elapsed >= 2000) {
-            const microgame = randomMicrogame();
-            const duration = (5 + Math.max(4 - this.game.level/2, 0)) * 1000;
-            console.log('Level ' + this.game.level + ' "' + microgame.name + '" for ' + duration/1000 + ' s');
+            // Take the next minigame
+            const microgame = this.microgames.shift();
+
+            // Recycle games when we run out
+            if (this.microgames.length == 0) {
+                this.microgames = [...microgames];
+                shuffle(this.microgames);
+            }
+
+            console.log('Level ' + this.game.level + ' "' + microgame.name + '" for ' + this.gameDuration/1000 + ' s');
 
             // Reset the time elapsed in the counter
             this.elapsed = 0;
 
             // Create the minigame and curtain over it
-            this.game.pushState(new MicrogameState(microgame, duration));
+            this.game.pushState(new MicrogameState(microgame, this.gameDuration));
             this.game.pushState(new CurtainState('open'));
+
+            this.lastMicrogame = microgame;
         }
     }
 
     draw() {
         setBorderBg(0, 0, 0);
+
+        const vuFrames = [
+            [[0*80, 0], [80, 40]],
+            [[1*80, 0], [80, 40]],
+            [[2*80, 0], [80, 40]],
+            [[3*80, 0], [80, 40]],
+            [[4*80, 0], [80, 40]],
+            [[5*80, 0], [80, 40]],
+            [[6*80, 0], [80, 40]],
+            [[7*80, 0], [80, 40]],
+            [[8*80, 0], [80, 40]],
+            [[9*80, 0], [80, 40]],
+            [[10*80, 0], [80, 40]],
+        ];
 
         p.pushMatrix();
         p.translate(0, 0);
@@ -439,6 +514,22 @@ class CounterState extends State {
         p.translate(300, 0);
         p.image(SPRITES.right_boom, 0, 0);
         p.popMatrix();
+
+        const numFrames = vuFrames.length - 1;
+        const frameNum = Math.min(8 + Math.floor(8 * Math.sin(this.elapsed/100)), numFrames);
+        switch (this.game.lives) {
+        case 4:
+            drawFrame(SPRITES['vu'], vuFrames[frameNum], 30, 82);
+
+        case 3:
+            drawFrame(SPRITES['vu'], vuFrames[(frameNum + 2) % numFrames], 120, 82);
+
+        case 2:
+            drawFrame(SPRITES['vu'], vuFrames[(frameNum + 4) % numFrames], 400, 82);
+
+        case 1:
+            drawFrame(SPRITES['vu'], vuFrames[(frameNum + 6) % numFrames], 490, 82);
+        }
     }
 }
 
@@ -448,6 +539,8 @@ class MicrogameState extends State {
     duration;
 
     elapsed = 0;
+
+    finishedTime = 0;
 
     constructor(microgame, duration) {
         super();
@@ -470,12 +563,22 @@ class MicrogameState extends State {
             this.elapsed += delta;
         }
 
-        // If the game timed out or is over
-        const timesUp = this.elapsed > this.duration;
-        if (timesUp) {
-            const won = (status === 'win');
+        // Count down after an early win/lose
+        if (this.finishedTime == 0 &&
+                (status === 'won' || status === 'lost')) {
+            this.finishedTime = this.elapsed;
+        }
 
-            //TODO lives
+        // If the game timed out or finished long enough ago
+        const timesUp = this.elapsed > this.duration;
+        const finishedLongAgo = (this.finishedTime > 0) && 
+            (this.elapsed - this.finishedTime) > 2000;
+        if (timesUp || finishedLongAgo) {
+            // Subtract lives, but leave handling the lives to CounterState
+            const won = (status === 'won');
+            if (!won) {
+                this.game.lives--;
+            }
 
             this.game.changeState(new CurtainState('close'));
         }
@@ -500,6 +603,9 @@ class MicrogameState extends State {
         case 'tv':
             setBorderBg(23, 23, 23);
             p.image(SPRITES.borders.tv);
+            break;
+
+        case 'none':
             break;
         }
 

@@ -15,6 +15,9 @@ function initSprites() {
         'help_button': p.loadImage('./resources/help_button.png'),
         'option_button': p.loadImage('./resources/option_button.png'),
 
+        // For CounterState
+        'vu': p.loadImage('./resources/vu.png'),
+
         // For MicrogameState
         'borders': {
             'purple': p.loadImage('./resources/border_purple.png'),
@@ -47,6 +50,12 @@ function initSprites() {
             'bg': p.loadImage('./resources/duck_hunt/bg.png'),
             'sheet': p.loadImage('./resources/duck_hunt/sheet.png'),
         },
+
+        // For Shake
+        'shake': {
+            'border': p.loadImage('./resources/shake/border.png'),
+            'sheet': p.loadImage('/resources/shake/sheet.png'),
+        }
     };
 }
 
@@ -124,6 +133,14 @@ function isListOfNumbers(list) {
     }
 
     return true;
+}
+
+function shuffle(a) {
+    // Fisher-Yates shuffle
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor((i + 1) * Math.random());
+        [a[i], a[j]] = [a[j], a[i]];
+    }
 }
 
 class Vec {

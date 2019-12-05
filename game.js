@@ -5,6 +5,7 @@ class Game {
 
     level = 0;
     difficulty = 0;
+    lives = 4;
 
     pushState(newState) {
         newState.setGame(this);
