@@ -49,6 +49,9 @@ function initSprites() {
         },
         'rainyCat' : {
             'sheet' : p.loadImage('./resources/rainy_cat/rainy_cat.png')
+        },
+        'chinook' : {
+            'sheet' : p.loadImage('./resources/chinook/chinook.png')
         }
     };
 }

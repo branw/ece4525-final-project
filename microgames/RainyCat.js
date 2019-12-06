@@ -96,6 +96,7 @@ class RainyCat extends Microgame{
         if((this.curCatPos + 30 < this.umbPos) || (this.curCatPos + 46 > this.umbPos + 185 + 20)){
             this.distance = -1;
             this.catFrame = 0;
+            this.
             //this.curCatPos += this.curCatDir * 6;
         }// 185 is the width of the umbrella
 
