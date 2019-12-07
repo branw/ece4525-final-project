@@ -27,6 +27,8 @@ class Chinook extends Microgame{
     dropTimer = 0;
     randomDrop = randInt(450, 600);
 
+    landed = 0
+
     frames = [
        { // walk 1
         "start": [0, 0],
@@ -62,7 +64,7 @@ class Chinook extends Microgame{
         this.truckTimer += delta;
         this.dropTimer += delta;
 
-        if(this.chinookFrame !== 0){
+        if(this.chinookFrame !== 0 && this.landed === 0){
             if (this.game.keys['right']) {
                 if(this.truckPos < 420){
                     this.truckPos+=4;
@@ -88,18 +90,14 @@ class Chinook extends Microgame{
 
             // p.rect(this.truckPos, 280, 70, 80);
             // p.rect(this.truckPos + 70, 320, 145, 30);
-
-            if(this.boxHeight - 64 > 280 && (this.boxPos - 60 > this.truckPos && this.boxPos < this.truckPos + 70 )){
-                console.debug("on roof of truck");
-                let x = 1;
-            }
-            else if(this.boxHeight - 64 > 320 && (this.boxPos > this.truckPos + 70 && this.boxPos < this.truckPos + 145 + 70)){
-                console.debug("on bed of truck");
-
-                let y = 1;
+            if((this.boxHeight >=  240 && this.boxHeight <= 275) && this.boxPos + 64 >= this.truckPos && this.boxPos <= this.truckPos + 146){
+                this.landed = 1;
+                console.log(this.boxHeight);
             }
             else{
-                this.boxHeight += 3;
+                if(!this.landed){
+                    this.boxHeight += 3;
+                }
             }
         }
         if(!this.dropped){
@@ -122,11 +120,16 @@ class Chinook extends Microgame{
         if(this.gaitChange > 10){
             this.chinookFrame *= -1;
             this.gaitChange = 0;
+            if(this.landed){
+                this.truckPos -= 10;
+                this.boxPos -= 10;
+            }
         }
 
         if(this.truckTimer > 100){
             this.truckFrame *= -1;
             this.truckTimer = 0;
+
         }
 
         if(this.dropTimer > this.randomDrop){
@@ -193,9 +196,9 @@ class Chinook extends Microgame{
         else{
             p.translate(this.boxPos + 50,this.boxHeight + 65);
         }
-        p.stroke(255,0,0);
-        p.noFill();
-        p.rect(0,0, 64, 32);
+        // p.stroke(255,0,0);
+        // p.noFill();
+        // p.rect(0,0, 64, 32);
 
         imageFrame(SPRITES.chinook.sheet, this.frames[4]); // umbrella
         p.popMatrix();
@@ -203,9 +206,9 @@ class Chinook extends Microgame{
 
         p.stroke(255,0,0);
         p.noFill();
-        p.rect(this.truckPos, 280, 70, 80);
+        // p.rect(this.truckPos, 280, 70, 80);
 
-        p.rect(this.truckPos + 70, 320, 145, 30);
+        // p.rect(this.truckPos + 70, 320, 145, 30);
 
         p.pushMatrix();
 
@@ -228,6 +231,7 @@ class Chinook extends Microgame{
             p.translate(70, 80);
             p.scale(1);
             warioText("CATCH THE PAYLOAD!");
+   
             p.popMatrix();
 
             if (this.arrow_blink > 0) {
