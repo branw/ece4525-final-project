@@ -1,21 +1,31 @@
 class Chinook extends Microgame{
     state = 'intro';
 
-    umbPos = 210;
+    truckPos = 210;
     timerLimit = 50;
     flipTimer = 0;
     flip = 0;
-    curCatPos = 300;
-    curCatDir = (Math.round(Math.random())) ? -1 : 1;
+    curChinookPos = 300;
+    curChinookDir = (Math.round(Math.random())) ? -1 : 1;
+    boxDir = this.curChinookDir;
     distance = 10;
-    catFrame = -1;
+    chinookFrame = -1;
     gaitChange = 0;
     catWet = 0;
-    catWetTimer = 0;
+    decentTimer = 0;
     tutorialTimer = 0;
     arrow_timer = 0;
     arrow_blink = 1;
     blink = 150;
+    boxHeight = 60;
+    boxPos = 50;
+    dropped = 0; 
+
+    truckTimer = 0;
+    truckFrame = 1;
+
+    dropTimer = 0;
+    randomDrop = randInt(450, 600);
 
     frames = [
        { // walk 1
@@ -34,8 +44,13 @@ class Chinook extends Microgame{
         "offset": [0, 0]   
     },
     {
-        "start": [176 , 126],
+        "start": [176 , 122],
         "size": [146, 64],
+        "offset": [0, 0]       
+    },
+    { // box
+        "start": [244 , 26],
+        "size": [64, 32],
         "offset": [0, 0]       
     }
     ]
@@ -43,18 +58,20 @@ class Chinook extends Microgame{
 
     playGame(delta){
         this.flipTimer += delta;
-        this.catWetTimer += delta;
-        
-        if(this.catFrame !== 0){
+        this.decentTimer += delta;
+        this.truckTimer += delta;
+        this.dropTimer += delta;
+
+        if(this.chinookFrame !== 0){
             if (this.game.keys['right']) {
-                if(this.umbPos < 420){
-                    this.umbPos+=4;
+                if(this.truckPos < 420){
+                    this.truckPos+=4;
                 }
 
             } 
             else if (this.game.keys['left']) {
-                if(this.umbPos > 10){
-                    this.umbPos-=4;
+                if(this.truckPos > 10){
+                    this.truckPos-=4;
                 }
             }   
         }
@@ -66,30 +83,57 @@ class Chinook extends Microgame{
             this.flip  = !this.flip;
         }
 
-        if(this.catWetTimer > 100){
-            this.catWetTimer = 0;
-            this.catWet = !this.catWet;
+        if(this.decentTimer > 10 && this.dropped){
+            this.decentTimer = 0;
+
+            // p.rect(this.truckPos, 280, 70, 80);
+            // p.rect(this.truckPos + 70, 320, 145, 30);
+
+            if(this.boxHeight - 64 > 280 && (this.boxPos - 60 > this.truckPos && this.boxPos < this.truckPos + 70 )){
+                console.debug("on roof of truck");
+                let x = 1;
+            }
+            else if(this.boxHeight - 64 > 320 && (this.boxPos > this.truckPos + 70 && this.boxPos < this.truckPos + 145 + 70)){
+                console.debug("on bed of truck");
+
+                let y = 1;
+            }
+            else{
+                this.boxHeight += 3;
+            }
+        }
+        if(!this.dropped){
+            this.boxDir = this.curChinookDir
         }
 
-        if(this.distance === 0){
+        if(this.distance === 0 ){
             this.distance = randInt(15, 30);
-            this.curCatDir *= -1;
+            this.curChinookDir *= -1;
         }
-        else if(this.curCatPos < 30 && this.curCatPos > 0){
+        else if(this.curChinookPos < 30 && this.curChinookPos > 0){
             this.distance = randInt(15, 30);
-            this.curCatDir = 1;
+            this.curChinookDir = 1;
         }
-        else if(this.curCatPos > 478){
+        else if(this.curChinookPos > 478){
             this.distance = randInt(15, 30);
-            this.curCatDir = -1;
+            this.curChinookDir = -1;
         }
 
-        if(this.gaitChange > 30){
-            this.catFrame *= -1;
+        if(this.gaitChange > 10){
+            this.chinookFrame *= -1;
             this.gaitChange = 0;
         }
+
+        if(this.truckTimer > 100){
+            this.truckFrame *= -1;
+            this.truckTimer = 0;
+        }
+
+        if(this.dropTimer > this.randomDrop){
+            this.dropped = 1;
+        }
         
-        this.curCatPos += this.curCatDir * 3;
+        this.curChinookPos += this.curChinookDir * 3;
         this.distance -= 3;
         this.gaitChange += 3;
         
@@ -114,42 +158,67 @@ class Chinook extends Microgame{
 
 
     draw() {    
-        warioText("MOVE UMBRELLA!");
 
         p.background(248, 248, 160);
 
 
 
         p.pushMatrix();
-        p.translate(this.curCatPos,50);
+        p.translate(this.curChinookPos,50);
         p.scale(1.3);
-        if(this.curCatDir === -1){
+        if(this.curChinookDir === -1){
             p.scale(-1,1);
-            if(this.catFrame === -1){
+            if(this.chinookFrame === -1){
                 p.translate(-40,0);
             }
             else{
-                p.translate(-46,0);
+                p.translate(-40,0);
             }
         }
-        if(this.catFrame === -1){
+        if(this.chinookFrame === -1){
             imageFrame(SPRITES.chinook.sheet, this.frames[0]);
         }
-        else if(this.catFrame === 1){
+        else if(this.chinookFrame === 1){
             imageFrame(SPRITES.chinook.sheet, this.frames[1]);
-        }
-        else if(this.catFrame === 0){
-            imageFrame(SPRITES.chinook.sheet, this.frames[this.catWet ? 2 : 3]);
         }
         p.popMatrix();
 
 
+
+        p.pushMatrix();
+        this.boxPos = this.dropped ? this.boxPos : this.curChinookPos
+        if(this.boxDir === -1){
+            p.translate(this.boxPos - 60,this.boxHeight + 65);
+        }
+        else{
+            p.translate(this.boxPos + 50,this.boxHeight + 65);
+        }
+        p.stroke(255,0,0);
+        p.noFill();
+        p.rect(0,0, 64, 32);
+
+        imageFrame(SPRITES.chinook.sheet, this.frames[4]); // umbrella
+        p.popMatrix();
+
+
+        p.stroke(255,0,0);
+        p.noFill();
+        p.rect(this.truckPos, 280, 70, 80);
+
+        p.rect(this.truckPos + 70, 320, 145, 30);
+
         p.pushMatrix();
 
-        p.translate(this.umbPos, 280 );
+        p.translate(this.truckPos, 280 );
         p.scale(1.5);
-        imageFrame(SPRITES.chinook.sheet, this.frames[2]); // umbrella
+        if(this.truckFrame === -1){
+            imageFrame(SPRITES.chinook.sheet, this.frames[2]); // truck
 
+        }
+        else{
+            imageFrame(SPRITES.chinook.sheet, this.frames[3]); // truck
+
+        }
         // make it go up and down
         p.popMatrix();
 
@@ -158,7 +227,7 @@ class Chinook extends Microgame{
             p.pushMatrix();
             p.translate(70, 80);
             p.scale(1);
-            warioText("KEEP THE CAT DRY!");
+            warioText("CATCH THE PAYLOAD!");
             p.popMatrix();
 
             if (this.arrow_blink > 0) {
