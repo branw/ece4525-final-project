@@ -48,7 +48,7 @@ class WrongWayHighway extends Microgame {
             for (let j = 0; j < 4; j++) {
                 if (lane == j) continue;
 
-                if (Math.abs(carY - lastInLane[j]) < 500) {
+                if (Math.abs(carY - lastInLane[j]) < 800) {
                     numNearby++;
                 }
             }

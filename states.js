@@ -402,6 +402,19 @@ class CurtainState extends State {
     }
 }
 
+class WonState extends State {
+    elapsed = 0;
+
+    update(delta) {
+        this.elapsed += delta;
+    }
+
+    draw() {
+        p.fill(0, 0, 255);
+        p.rect(0, 0, 600, 400);
+    }
+}
+
 class LostState extends State {
     elapsed = 0;
 
@@ -461,6 +474,10 @@ class CounterState extends State {
                 this.game.level++;
             }
 
+            if (this.game.level >= 10) {
+                this.state = 'won';
+            }
+
             this.lastLives = this.game.lives;
 
             // Select level duration/difficulty
@@ -513,6 +530,10 @@ class CounterState extends State {
 
         if (this.state === 'lost' && this.elapsed > 1000) {
             this.game.pushState(new LostState());
+        }
+
+        if (this.state === 'won' && this.elapsed > 1000) {
+            this.game.pushState(new WonState());
         }
     }
 
@@ -574,6 +595,10 @@ class CounterState extends State {
         }
         else if (this.elapsed > 0 && this.state === 'lost') {
             p.fill(255, 0, 0, Math.max(0, 127 + this.elapsed / 5));
+            p.rect(0, 0, 600, 400);
+        }
+        else if (this.elapsed > 0 && this.state === 'won') {
+            p.fill(0, 0, 255, Math.max(0, 127 + this.elapsed / 5));
             p.rect(0, 0, 600, 400);
         }
     }

@@ -68,6 +68,38 @@ function initSprites() {
             'road': p.loadImage('./resources/wrong_way_highway/road.png'),
             'sheet': p.loadImage('./resources/wrong_way_highway/sheet.png'),
         },
+
+        // For LinkChase
+        'zelda': {
+            'link': {
+                'down': [
+                    p.loadImage('./resources/zelda/link_down1.png'),
+                    p.loadImage('./resources/zelda/link_down2.png'),
+                ],
+                'up': [
+                    p.loadImage('./resources/zelda/link_up1.png'),
+                    p.loadImage('./resources/zelda/link_up2.png'),
+                ],
+                'side': [
+                    p.loadImage('./resources/zelda/link_side1.png'),
+                    p.loadImage('./resources/zelda/link_side2.png'),
+                ],
+            },
+            'octorok': [
+                p.loadImage('./resources/zelda/octorok1.png'),
+                p.loadImage('./resources/zelda/octorok2.png'),
+            ],
+            'overworld': [
+                p.loadImage('./resources/zelda/overworld1.png'),
+                p.loadImage('./resources/zelda/overworld2.png'),
+                p.loadImage('./resources/zelda/overworld3.png'),
+                p.loadImage('./resources/zelda/overworld4.png'),
+                p.loadImage('./resources/zelda/overworld5.png'),
+                p.loadImage('./resources/zelda/overworld6.png'),
+                p.loadImage('./resources/zelda/overworld7.png'),
+                p.loadImage('./resources/zelda/overworld8.png'),
+            ],
+        }
     };
 }
 
