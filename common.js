@@ -109,7 +109,9 @@ function initSprites() {
                 p.loadImage('./resources/zelda/overworld7.png'),
                 p.loadImage('./resources/zelda/overworld8.png'),
             ],
-        }
+        },
+        'general' : p.loadImage('./resources/general.png'),
+        'jimmy' : p.loadImage('./resources/jimmy_dance.png')
     };
 }
 
