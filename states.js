@@ -483,16 +483,16 @@ class CounterState extends State {
             // Select level duration/difficulty
             const lastDuration = this.gameDuration;
             if (this.game.level === 10) {
-                this.gameDuration = 3000;
+                this.gameDuration = 3000 - 100 * this.game.difficulty;
             }
             else if (this.game.level >= 7) {
-                this.gameDuration = 4500;
+                this.gameDuration = 4500 - 500 * this.game.difficulty;
             }
             else if (this.game.level >= 3) {
-                this.gameDuration = 5500;
+                this.gameDuration = 5500 - 750 * this.game.difficulty;
             }
             else {
-                this.gameDuration = 7000;
+                this.gameDuration = 7000 - 1000 * this.game.difficulty;
             }
 
             // Indicate that the next level will be quicker/harder
