@@ -17,6 +17,9 @@ new Processing(document.getElementById('game'), function(processingInstance) {
     // Enter intro state
     game.changeState(new IntroState());
 
+    // TEST : Enter win state
+    //game.changeState(new LostState());
+
     // Register input handlers
     const keyMapping = { 32: 'space', 37: 'left', 38: 'up', 39: 'right', 40: 'down' };
     p.keyPressed = function() {

@@ -402,29 +402,239 @@ class CurtainState extends State {
     }
 }
 
-class WonState extends State {
+class LostState extends State {
     elapsed = 0;
+    frames = [
+        { // sad 0
+            "start": [0, 1164],
+            "size": [240, 160],
+            "offset": [-14, 0]
+        },
+        { // neutral 1
+            "start": [0, 996],
+            "size": [240, 160],
+            "offset": [0, 0]    
+        },
+        { // happy 2 
+            "start": [246, 996],
+            "size": [240, 160],
+            "offset": [0, 0]
+        },
+        { // keyboard1 3 
+            "start": [597, 343],
+            "size": [88, 79],
+            "offset": [0, 0]
+        },
+        { // keyboard 4
+            "start": [597, 430],
+            "size": [88, 79],
+            "offset": [0, 0]
+        },
+        { // border 5
+            "start": [0, 0],
+            "size": [600, 400],
+            "offset": [0, 0]
+        }
 
+    ];
+
+    mainWarioTimer = 0;
+    mainWarioFrame = 0;
+
+    keyboardWarioTimer = 0;
+    keyboardWarioFrame = 0;
     update(delta) {
         this.elapsed += delta;
+
+        if(this.elapsed - this.mainWarioTimer > 300){
+            this.mainWarioFrame = !this.mainWarioFrame;
+            this.mainWarioTimer = this.elapsed;
+        }
+        if(this.elapsed - this.keyboardWarioTimer > 150){
+            this.keyboardWarioFrame = !this.keyboardWarioFrame;
+            this.keyboardWarioTimer = this.elapsed;
+        }
+
+
+
+
     }
 
     draw() {
-        p.fill(0, 0, 255);
-        p.rect(0, 0, 600, 400);
+        p.background(255, 175, 0);
+
+        imageFrame(SPRITES.borders.tv, this.frames[5]);
+        //imageFrame(SPRITES.m_banana, this.frames[this.curFrame]);
+
+        p.pushMatrix();
+        p.translate(210,220);
+        imageFrame(SPRITES.general, this.frames[this.mainWarioFrame ? 0 : 1]);
+        p.popMatrix();
+
+        p.pushMatrix();
+        p.translate(30,240);
+        p.scale(1.5);
+        imageFrame(SPRITES.general, this.frames[this.keyboardWarioFrame ? 3 : 4]);
+        p.popMatrix();
+
+        p.pushMatrix();
+        p.translate(570,240);
+        p.scale(-1.5, 1.5);
+        imageFrame(SPRITES.general, this.frames[this.keyboardWarioFrame ? 3 : 4]);
+        p.popMatrix();
+        
+        p.pushMatrix();
+        p.translate(170,50);
+        warioText("You Lost!");
+        p.translate(-20, 50);
+        warioText("Try Again!");
+        p.popMatrix();
+        
+
     }
 }
 
-class LostState extends State {
+class WinState extends State {
     elapsed = 0;
+    frames = [
+        { // sad 0
+            "start": [0, 1164],
+            "size": [240, 160],
+            "offset": [-14, 0]
+        },
+        { // neutral 1
+            "start": [0, 996],
+            "size": [240, 160],
+            "offset": [0, 0]    
+        },
+        { // happy 2 
+            "start": [246, 996],
+            "size": [240, 160],
+            "offset": [0, 0]
+        },
+        { // keyboard1 3 
+            "start": [597, 343],
+            "size": [88, 79],
+            "offset": [0, 0]
+        },
+        { // keyboard 4
+            "start": [597, 430],
+            "size": [88, 79],
+            "offset": [0, 0]
+        },
+        { // border 5
+            "start": [0, 0],
+            "size": [600, 400],
+            "offset": [0, 0]
+        }
+
+    ];
+
+    jimmyFrames =[
+        {
+            "start": [0, 0],
+            "size": [128, 220],
+            "offset": [0, 0]
+        },
+        {
+            "start": [126, 0],
+            "size": [126, 210],
+            "offset": [0, 0]
+        },
+        {
+            "start": [253, 0],
+            "size": [128, 210],
+            "offset": [0, 0]
+        }
+    ];
+
+    secondJimmyFrames = [
+        {
+            "start": [0, 212],
+            "size": [126, 210],
+            "offset": [0, 0]
+        },
+        {
+            "start": [126, 212],
+            "size": [126, 210],
+            "offset": [0, 0]
+        },
+        {
+            "start": [253, 212],
+            "size": [126, 210],
+            "offset": [0, 0]
+        }
+
+    ];
+
+    mainWarioTimer = 0;
+    mainWarioFrame = 0;
+
+    keyboardWarioTimer = 0;
+    keyboardWarioFrame = 0;
+    curJimmyFrame = 0;
+
+    jimmyTimer = 0;
 
     update(delta) {
         this.elapsed += delta;
+
+        if(this.elapsed - this.mainWarioTimer > 300){
+            this.mainWarioFrame = !this.mainWarioFrame;
+            this.mainWarioTimer = this.elapsed;
+        }
+        if(this.elapsed - this.keyboardWarioTimer > 150){
+            this.keyboardWarioFrame = !this.keyboardWarioFrame;
+            this.keyboardWarioTimer = this.elapsed;
+        }
+
+        if(this.elapsed - this.jimmyTimer > 100){
+            if(this.curJimmyFrame === this.jimmyFrames.length - 1){
+                this.curJimmyFrame = 0;
+            }
+            else{
+                this.curJimmyFrame++;
+  
+            }
+            this.jimmyTimer = this.elapsed;
+        }
+
+
+
     }
 
     draw() {
-        p.fill(0, 255, 0);
-        p.rect(0, 0, 600, 400);
+        p.background(0, 0, 255);
+
+        imageFrame(SPRITES.borders.tv, this.frames[5]);
+        //imageFrame(SPRITES.m_banana, this.frames[this.curFrame]);
+
+        p.pushMatrix();
+        p.translate(210,220);
+        imageFrame(SPRITES.general, this.frames[this.mainWarioFrame ? 1 : 2]);
+        p.popMatrix();
+
+        p.pushMatrix();
+        p.translate(70,140);
+        p.scale(1);
+        imageFrame(SPRITES.jimmy, this.jimmyFrames[this.curJimmyFrame]);
+        p.popMatrix();
+
+        p.pushMatrix();
+        p.translate(420,140);
+        p.scale(1);
+        imageFrame(SPRITES.jimmy, this.secondJimmyFrames[this.curJimmyFrame]);
+        p.popMatrix();
+
+
+        p.pushMatrix();
+        p.translate(190,50);
+        warioText("You Won!");
+        p.translate(-120, 50);
+        warioText("congratulations!");
+        p.popMatrix();
+        
+
     }
 }
 
