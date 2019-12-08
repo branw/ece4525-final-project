@@ -22,6 +22,7 @@ function initSprites() {
         'borders': {
             'purple': p.loadImage('./resources/border_purple.png'),
             'mustard': p.loadImage('./resources/border_mustard.png'),
+            'olive': p.loadImage('./resources/border_olive.png'),
             'tv': p.loadImage('./resources/border_tv.png'),
         },
         'bomb': {
@@ -61,6 +62,12 @@ function initSprites() {
             'border': p.loadImage('./resources/shake/border.png'),
             'sheet': p.loadImage('/resources/shake/sheet.png'),
         },
+
+        // For WrongWayHighway
+        'highway': {
+            'road': p.loadImage('./resources/wrong_way_highway/road.png'),
+            'sheet': p.loadImage('./resources/wrong_way_highway/sheet.png'),
+        },
     };
 }
 
@@ -98,6 +105,7 @@ function setCursor(active) {
 
 function warioText(str) {
     const alphabet = [12, 44, 76, 108, 138, 170, 200, 232, 260, 290, 322, 352, 382, 418, 450, 482, 514, 546, 576, 606, 638, 668, 700, 734, 768, 800, 0];
+    const numerals = [376, 408, 432, 462, 492, 522, 552, 582, 610, 640, 668];
     const specials = {
         // startX, startY, width, height
         '!': [794, 64, 18, 32]
@@ -117,6 +125,15 @@ function warioText(str) {
 
             p.image(SPRITES.text.get(data[0], data[1], data[2], data[3]), x, -2);
             x += data[3];
+        }
+        // Numerals
+        else if (str[i] >= '0' && str[i] <= '9') {
+            const pos = str.charCodeAt(i) - '0'.charCodeAt(0);
+            const start = numerals[pos];
+            const width = numerals[pos + 1] - start;
+
+            p.image(SPRITES.text.get(start, 64, width, 32), x, 0);
+            x += width;
         }
         // Alphabetic characters
         else if (str[i] != str[i].toLowerCase()) {

@@ -348,6 +348,12 @@ class OptionState extends State {
     }
 }
 
+function pad(n, width, z) {
+  z = z || '0';
+  n = n + '';
+  return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+}
+
 class CurtainState extends State {
     duration;
     direction;
@@ -396,6 +402,19 @@ class CurtainState extends State {
     }
 }
 
+class LostState extends State {
+    elapsed = 0;
+
+    update(delta) {
+        this.elapsed += delta;
+    }
+
+    draw() {
+        p.fill(0, 255, 0);
+        p.rect(0, 0, 600, 400);
+    }
+}
+
 // Shows current stage number and health
 class CounterState extends State {
     elapsed = 0;
@@ -423,7 +442,7 @@ class CounterState extends State {
             if (this.lastLives >= 0 && this.lastLives != this.game.lives) {
                 // Out of lives
                 if (this.game.lives == 0) {
-                    this.state = 'dead';
+                    this.state = 'lost';
                 }
                 // Still has lives left
                 else {
@@ -439,10 +458,10 @@ class CounterState extends State {
             // Just started or won last game
             else {
                 this.state = 'normal';
+                this.game.level++;
             }
 
             this.lastLives = this.game.lives;
-            this.game.level++;
 
             // Select level duration/difficulty
             const lastDuration = this.gameDuration;
@@ -466,7 +485,7 @@ class CounterState extends State {
         this.elapsed += delta;
 
         // Move to game after 5 seconds
-        if (this.elapsed >= 2000) {
+        if (this.state !== 'lost' && this.elapsed >= 2000) {
             // Take the next minigame
             const microgame = this.microgames.shift();
 
@@ -486,6 +505,14 @@ class CounterState extends State {
             this.game.pushState(new CurtainState('open'));
 
             this.lastMicrogame = microgame;
+        }
+
+        if (this.state === 'hurt' && this.elapsed / 5 >= 127) {
+            this.state = 'normal';
+        }
+
+        if (this.state === 'lost' && this.elapsed > 1000) {
+            this.game.pushState(new LostState());
         }
     }
 
@@ -531,6 +558,23 @@ class CounterState extends State {
 
         case 1:
             drawFrame(SPRITES['vu'], vuFrames[(frameNum + 6) % numFrames], 490, 82);
+        }
+
+        // Draw level count
+        p.pushMatrix();
+        p.translate(258, 184);
+        p.scale(0.95);
+        warioText(pad(this.game.level, 3));
+        p.popMatrix();
+
+        // Draw hurting/lost overlay
+        if (this.elapsed > 0 && this.state === 'hurt') {
+            p.fill(255, 0, 0, Math.max(0, 127 - this.elapsed / 5));
+            p.rect(0, 0, 600, 400);
+        }
+        else if (this.elapsed > 0 && this.state === 'lost') {
+            p.fill(255, 0, 0, Math.max(0, 127 + this.elapsed / 5));
+            p.rect(0, 0, 600, 400);
         }
     }
 }
@@ -606,6 +650,11 @@ class MicrogameState extends State {
         case 'tv':
             setBorderBg(23, 23, 23);
             p.image(SPRITES.borders.tv);
+            break;
+
+        case 'olive':
+            setBorderBg(104, 136, 101);
+            p.image(SPRITES.borders.olive);
             break;
 
         case 'none':
