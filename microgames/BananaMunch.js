@@ -1,6 +1,5 @@
 class BananaMunch extends Microgame {
     border = 'mustard';
-
     state = 'intro';
     elapsed = 0;
     total_spin = 0;
@@ -60,7 +59,6 @@ class BananaMunch extends Microgame {
     update(delta) {
         this.elapsed += delta;
 
-        // Blink arrow keys
         if (this.elapsed - this.arrow_timer > this.blink) {
             this.arrow_blink *= -1;
             this.arrow_timer = this.elapsed;
@@ -68,6 +66,7 @@ class BananaMunch extends Microgame {
 
         switch (this.state) {
         case 'intro': 
+
             if (this.elapsed > 800) {
                 this.state = "play";
             }
@@ -108,6 +107,7 @@ class BananaMunch extends Microgame {
             if (this.banana_count > 18){
                 this.state = "win";
                 this.blink = 300;
+                this.curFrame++;
             }
 
             break;
@@ -156,7 +156,7 @@ class BananaMunch extends Microgame {
             case 'win':
                 p.pushMatrix();
                 p.translate(220 + this.win_text_off,60);
-                warioText("YOU WIN!");
+                warioText("YUMMY!");
                 p.popMatrix();
                 this.win_banana_rot += 3.14/180;
                 if(this.arrow_blink > 0){
@@ -196,6 +196,13 @@ class BananaMunch extends Microgame {
                 imageFrame(SPRITES.m_banana, this.frames[0]);
                 p.popMatrix();
                 p.imageMode(p.CORNER);
+
+                if(this.arrow_blink > 0){
+                    p.pushMatrix();
+                    p.translate(230, 70);
+                    imageFrame(SPRITES.m_banana, this.frames[this.curFrame]);
+                    p.popMatrix();
+                }
 
                 break;
         }

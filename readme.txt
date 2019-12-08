@@ -1,4 +1,17 @@
-Milestone #1 
+Milestone #2
+
+The options screen now allows for the difficulty to be selected. The help screen gives more insightful instructions.
+
+All of the animations have been improved. Additionally, each game now shows a keyword describing the objective, as well as an icon representing the input scheme required.
+
+Two microgames are included, each covering one of the two input schemes: mouse and keyboard.
+The first game, banana muncher, requires the player to peel three bananas in rapid succession using only the arrow keys.
+The second game, duck hunt, requires the player to shoot one to two ducks as they fly off using the mouse.
+
+Microgames are selected at random.
+
+
+Milestone #1
 
 Current version of the game has the WarioWare main screen with two Warios dancing.
 

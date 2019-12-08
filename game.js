@@ -4,6 +4,7 @@ class Game {
     states = [];
 
     level = 0;
+    difficulty = 0;
 
     pushState(newState) {
         newState.setGame(this);
