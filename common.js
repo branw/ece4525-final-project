@@ -59,7 +59,12 @@ function initSprites() {
 
         // For Chinook
         'chinook' : {
-            'sheet' : p.loadImage('./resources/chinook/chinook.png')
+            'sheet': p.loadImage('./resources/chinook/chinook.png')
+        },
+
+        // For Fountain
+        'fountain': {
+            'sheet': p.loadImage('./resources/fountain/sheet.png'),
         },
 
         // For Shake

@@ -249,7 +249,7 @@ class Chinook extends Microgame {
             p.pushMatrix();
             p.translate(70, 80);
             p.scale(1);
-            warioText("CATCH THE PAYLOAD!");
+            warioText("CATCH!");
    
             p.popMatrix();
 
