@@ -52,6 +52,9 @@ function initSprites() {
         },
         'chinook' : {
             'sheet' : p.loadImage('./resources/chinook/chinook.png')
+        },        
+        'fountain' : {
+            'sheet' : p.loadImage('./resources/fountain/sheet.png')
         }
     };
 }

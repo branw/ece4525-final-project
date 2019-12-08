@@ -85,11 +85,10 @@ class Chinook extends Microgame{
             this.flip  = !this.flip;
         }
 
+
+        // decrement the box height and checks if the payload has dropped onto the bed
         if(this.decentTimer > 10 && this.dropped){
             this.decentTimer = 0;
-
-            // p.rect(this.truckPos, 280, 70, 80);
-            // p.rect(this.truckPos + 70, 320, 145, 30);
             if((this.boxHeight >=  240 && this.boxHeight <= 275) && this.boxPos + 64 >= this.truckPos && this.boxPos <= this.truckPos + 146){
                 this.landed = 1;
                 console.log(this.boxHeight);
@@ -100,42 +99,58 @@ class Chinook extends Microgame{
                 }
             }
         }
-        if(!this.dropped){
-            this.boxDir = this.curChinookDir
+
+        // spaghetti for checking for loss if the box height is lower than bed
+        if(!this.landed && this.boxHeight > 275){
+            // return loss
         }
 
+        // if it is dropped, stop following the chinook's direction
+        if(!this.dropped){
+            this.boxDir = this.curChinookDir;
+        }
+
+        // random chinook travel distance
         if(this.distance === 0 ){
             this.distance = randInt(15, 30);
             this.curChinookDir *= -1;
         }
+        // boundary checking for chinook
         else if(this.curChinookPos < 30 && this.curChinookPos > 0){
             this.distance = randInt(15, 30);
             this.curChinookDir = 1;
         }
+        // make it go the other way if it hits right edge
         else if(this.curChinookPos > 478){
             this.distance = randInt(15, 30);
             this.curChinookDir = -1;
         }
 
+        // chinook frame change based on (gaitChange)
         if(this.gaitChange > 10){
             this.chinookFrame *= -1;
             this.gaitChange = 0;
             if(this.landed){
                 this.truckPos -= 10;
                 this.boxPos -= 10;
+                // return win
             }
+
         }
 
+        // frame change for truck
         if(this.truckTimer > 100){
             this.truckFrame *= -1;
             this.truckTimer = 0;
 
         }
 
+        // randomly drop the payload based on randomDrop
         if(this.dropTimer > this.randomDrop){
             this.dropped = 1;
         }
         
+        // move chinook, decrement distance draveled
         this.curChinookPos += this.curChinookDir * 3;
         this.distance -= 3;
         this.gaitChange += 3;
@@ -196,19 +211,11 @@ class Chinook extends Microgame{
         else{
             p.translate(this.boxPos + 50,this.boxHeight + 65);
         }
-        // p.stroke(255,0,0);
-        // p.noFill();
-        // p.rect(0,0, 64, 32);
 
         imageFrame(SPRITES.chinook.sheet, this.frames[4]); // umbrella
         p.popMatrix();
-
-
         p.stroke(255,0,0);
         p.noFill();
-        // p.rect(this.truckPos, 280, 70, 80);
-
-        // p.rect(this.truckPos + 70, 320, 145, 30);
 
         p.pushMatrix();
 
