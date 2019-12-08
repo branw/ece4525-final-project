@@ -11,8 +11,7 @@ class BananaMunch extends Microgame {
 
     banana_timer = 0;
 
-    keypress_order = ["left", "down", "right", "up"];
-    current = "up";
+    current = '';
     banana_count = 0;
     SPIN_Y = 0;
     win_banana_rot = 0;
@@ -82,18 +81,18 @@ class BananaMunch extends Microgame {
                 this.SPIN_Y += 10;
             }
 
+            const keypressOrder = ["left", "down", "right", "up"];
+            const keyDown = this.game.keys['down'] ? 'down' :
+                            this.game.keys['up'] ? 'up' :
+                            this.game.keys['left'] ? 'left' :
+                            this.game.keys['right'] ? 'right' : '';
+            const nextKeyDown = keypressOrder[
+                (keypressOrder.indexOf(this.current) + 1) % 4];
+
             let changed = 0;
-            if (this.current === "left" && this.game.keys['down']) {
-                this.current = "down";
-                changed++;
-            } else if (this.current === "down" && this.game.keys['right']) {
-                this.current = "right";
-                changed++;
-            } else if (this.current === "right" && this.game.keys['up']) {
-                this.current = "up";
-                changed++;
-            } else if (this.current === "up" && this.game.keys['left']) {
-                this.current = "left";
+            if ((this.current === '' && keyDown !== '') ||
+                    (this.current !== '' && keyDown === nextKeyDown)) {
+                this.current = keyDown;
                 changed++;
             }
 

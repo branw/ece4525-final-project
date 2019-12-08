@@ -75,10 +75,7 @@ class RainyCat extends Microgame{
             }
             break;
 
-        case 'playing': {
-            this.flipTimer += delta;
-            this.catWetTimer += delta;
-
+        case 'playing':
             if(this.catFrame !== 0){
                 if (this.game.keys['right']) {
                     if(this.umbPos < 420){
@@ -94,11 +91,6 @@ class RainyCat extends Microgame{
                 }   
             }
             // keypresses
-
-            if(this.catWetTimer > 100){
-                this.catWetTimer = 0;
-                this.catWet = !this.catWet;
-            }
 
 
             // check if it hit left boundary
@@ -133,8 +125,17 @@ class RainyCat extends Microgame{
                 this.distance -= 3;
                 this.gaitChange += 3;
             }
+
+        case 'lost':
+            this.catWetTimer += delta;
+            this.flipTimer += delta;
+
+            if(this.catWetTimer > 100){
+                this.catWetTimer = 0;
+                this.catWet = !this.catWet;
+            }
+
             break;
-        }
         }
 
         return this.state;

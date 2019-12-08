@@ -494,7 +494,7 @@ class LostState extends State {
     }
 }
 
-class WinState extends State {
+class WonState extends State {
     elapsed = 0;
     frames = [
         { // sad 0
