@@ -15,17 +15,17 @@ var TILEMAP = [
     "5 56 5 56  4556 1555",
     "5 5  5 6        4555",
     "5 4  5 L  1 13   455",
-    "5    6   15556    55",
+    "5 O  6   15556    55",
     "553     7     7 7 45",
     "56  1553   13   8  5",
     "5        8 4553  7 5",
     "53  1553    4553   5",
-    "55   456  1       15",
+    "55   456  1 O     15",
     "553      153  8 1555",
     "5 5 1553  4553  4555",
     "5 6  16    4553  5 5",
     "6    6  13  5553 5 5",
-    "153   8 55  4556 5 5",
+    "153 O 8 55  4556 5 5",
     "5 456   553      4 5",
     "5      16 45553  O 5",
     "45555556    45555556"
@@ -235,8 +235,13 @@ Octorok.prototype.update = function(target) {
         // Take the step
         this.step.set(this.target.x - this.pos.x, this.target.y - this.pos.y);
         this.step.normalize();
+        this.step.mult(0.6);
         this.pos.add(this.step);
     }
+
+    console.log(p.dist(target.x, target.y, this.pos.x, this.pos.y));
+
+    return p.dist(target.x, target.y, this.pos.x, this.pos.y) < 13;
 };
 
 Octorok.prototype.draw = function(chargingFrame, releasedFrame) {
@@ -315,7 +320,9 @@ Link.prototype.update = function(keys, walls) {
     this.move(new PVector(this.pos.x, y), walls);
 };
 
-Link.prototype.draw = function() {
+Link.prototype.draw = function(scale) {
+    scale = scale || 1;
+
     // Change feet every so many steps
     if (this.walking) {
         this.walkingTicks++;
@@ -338,7 +345,7 @@ Link.prototype.draw = function() {
     
     p.pushMatrix();
     p.translate(this.pos.x + TILE_SIZE/2 + (xFactor > 0 ? 0 : TILE_SIZE), this.pos.y);
-    p.scale(xFactor, 1);
+    p.scale(scale * xFactor, scale);
     p.image(SPRITES.zelda.link[spriteDir][spriteNum], -xFactor * TILE_SIZE/2, 0, TILE_SIZE, TILE_SIZE);
     p.popMatrix();
 };
@@ -354,6 +361,10 @@ class LinkChase extends Microgame {
     player;
     octoroks = [];
     walls = [];
+
+    lastOctorokUpdate = 0;
+
+    lostTime = 0;
 
     constructor() {
         super();
@@ -400,18 +411,39 @@ class LinkChase extends Microgame {
             break;
 
         case 'playing':
-            for (var i = 0; i < this.octoroks.length; i++) {
-                this.octoroks[i].update(this.player.pos);
+            let hit = false;
+            if (this.elapsed - this.lastOctorokUpdate > 100) {
+                this.lastOctorokUpdate = this.elapsed;
+                for (var i = 0; i < this.octoroks.length; i++) {
+                    if (this.octoroks[i].update(this.player.pos)) {
+                        hit = true;
+                    }
+                }
             }
 
             this.player.update(this.game.keys, this.walls);
+
+            if (hit) {
+                this.state = 'lost';
+                this.lostTime = this.elapsed;
+            }
+
+            break;
+
+        case 'lost':
+
             break;
         }
+
+        return this.state;
     }
 
     draw() {
         setBg(252, 216, 168);
         
+        p.pushMatrix();
+        p.translate(100, 0);
+
         // Draw the overworld
         for (var i = 0; i < this.walls.length; i++) {
             this.walls[i].draw();
@@ -421,8 +453,10 @@ class LinkChase extends Microgame {
         for (var i = 0; i < this.octoroks.length; i++) {
             this.octoroks[i].draw();
         }
+        
+        this.player.draw((this.state === 'lost') ? 1 + (this.elapsed - this.lostTime) / 200 : 1);
 
-        this.player.draw();
+        p.popMatrix();
 
         if (this.state === 'intro') {
             p.pushMatrix();
