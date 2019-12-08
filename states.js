@@ -588,6 +588,8 @@ class CounterState extends State {
         warioText(pad(this.game.level, 3));
         p.popMatrix();
 
+        p.noStroke();
+
         // Draw hurting/lost overlay
         if (this.elapsed > 0 && this.state === 'hurt') {
             p.fill(255, 0, 0, Math.max(0, 127 - this.elapsed / 5));
