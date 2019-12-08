@@ -90,7 +90,7 @@ class Chinook extends Microgame{
 
             // p.rect(this.truckPos, 280, 70, 80);
             // p.rect(this.truckPos + 70, 320, 145, 30);
-            if((this.boxHeight >=  240 && this.boxHeight <= 275) && this.boxPos + 64 >= this.truckPos && this.boxPos <= this.truckPos + 146){
+            if((this.boxHeight >=  240 && this.boxHeight <= 275) && this.boxPos >= this.truckPos && this.boxPos <= this.truckPos + 146){
                 this.landed = 1;
                 console.log(this.boxHeight);
             }
